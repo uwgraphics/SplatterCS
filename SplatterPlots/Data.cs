@@ -8,7 +8,7 @@ using System.IO;
 
 namespace SplatterPlots
 {
-    class ColumnData
+    public class ColumnData
     {
         public ColumnData(string name, float min, float max )
         {
@@ -112,7 +112,10 @@ namespace SplatterPlots
         }
 
 
-
+        public List<Vector2> getXYValues(int ColumnXIndex, int ColumnYIndex)
+        {
+            return getXYValues(ColumnNames[ColumnXIndex], ColumnNames[ColumnYIndex]);
+        }
         public List<Vector2> getXYValues(string ColumnXName, string ColumnYName)
         {
             ColumnData cDX = ColumnData[ColumnXName];

@@ -71,9 +71,6 @@
     <Compile Include="SplatterView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SplatterView.Designer.cs">
-      <DependentUpon>SplatterView.cs</DependentUpon>
-    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -86,6 +83,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SplatterView.resx">
+      <DependentUpon>SplatterView.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

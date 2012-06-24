@@ -14,6 +14,8 @@ namespace SplatterPlots
     public partial class SplatterView : GLControl
     {
         #region fields
+        SplatterModel splatPM;
+
         float offsetX;
         float offsetY;
         float scaleX;
@@ -98,74 +100,81 @@ namespace SplatterPlots
             Refresh();
         }
 
-         void glPaint() {
-            if(splatPM==shared_ptr<SplatGL>())
+        void glPaint()
+        {
+            if (splatPM == null)
                 return;
             this.MakeCurrent();
 
-            //glBlendFunc(GL_ONE,GL_ONE);
             int N = 0;
-            for(int i=0;i<splatPM->seriesList.size();i++){
-                if(splatPM->seriesList[i]->enabled){
-                    string temp = splatPM->seriesList[i]->name;
-                    QString name = QString::fromStdString(temp);
-                    renderSeries(splatPM->seriesList[i],(M_PI/splatPM->seriesList.size())*i);	
-                    N++;
+            foreach (var series in splatPM.seriesList.Values)
+            {
+                if (series.enabled)
+                {
+                    //renderSeries(splatPM->seriesList[i],(M_PI/splatPM->seriesList.size())*i);	
+                    //           N++;
                 }
             }
+
 
             int I = 0;
-            for(int i=0;i<splatPM->seriesList.size();i++){
-                if(splatPM->seriesList[i]->enabled){
-                    string temp = splatPM->seriesList[i]->name;
-                    QString name = QString::fromStdString(temp);		
-                    densityMap[name]->BindRGB(I);
-                    I++;
+            foreach (var series in splatPM.seriesList.Values)
+            {
+                if (series.enabled)
+                {
+
+                    //densityMap[name]->BindRGB(I);
+                    //           I++;
                 }
             }
-            glClearColor(1.0f,1.0f,1.0f,1.0f);
-            glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            if(this->contours){
-                //int N = splatPM->seriesList.size();
-                blendProgram->bind();
-                blendProgram->setUniformValue("N",N);
-                blendProgram->setUniformValue("lf",lightnessF);
-                blendProgram->setUniformValue("cf",chromaF);		
 
-                QMatrix4x4 imat;
-                glLoadMatrixd(imat.constData());
-                glColor4f(1,1,1,1);
-                glBegin(GL_QUADS);
-                    glTexCoord2f(0, 0);
-                    glVertex2f(0, 0);
-                    glTexCoord2f(1, 0);
-                    glVertex2f(width(), 0);
-                    glTexCoord2f(1, 1);
-                    glVertex2f(width(), height());
-                    glTexCoord2f(0, 1);
-                    glVertex2f(0, height());
-                glEnd();	
 
-                blendProgram->release();
+            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            if (contours)
+            {
+                //blendProgram->bind();
+                //blendProgram->setUniformValue("N",N);
+                //blendProgram->setUniformValue("lf",lightnessF);
+                //blendProgram->setUniformValue("cf",chromaF);		
+
+
+                GL.LoadMatrix(ref Matrix4.Identity);
+                GL.Color4(1, 1, 1, 1);
+                GL.Begin(BeginMode.Quads);
+                GL.TexCoord2(0, 0);
+                GL.Vertex2(0, 0);
+                GL.TexCoord2(1, 0);
+                GL.Vertex2(Width, 0);
+                GL.TexCoord2(1, 1);
+                GL.Vertex2(Width, Height);
+                GL.TexCoord2(0, 1);
+                GL.Vertex2(0, Height);
+                GL.End();
+
+                //blendProgram->release();
             }
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D,0);
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
 
-            glMatrixMode(GL_MODELVIEW);	
-            glDisable(GL_BLEND);
-            glDisable(GL_TEXTURE_2D);
-            this->setZoomPan();
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.Disable(EnableCap.Blend);
+            GL.Disable(EnableCap.Texture2D);
+            //setZoomPan();
 
-            if(this->splatPM->showAllPoints){
-                for(int i=0;i<splatPM->seriesList.size();i++){
-                    if(splatPM->seriesList[i]->enabled){
-                        drawPoints(splatPM->seriesList[i]);	
+            if (splatPM.showAllPoints)
+            {
+                foreach (var series in splatPM.seriesList.Values)
+                {
+                    if (series.enabled)
+                    {
+                        //drawPoints(splatPM->seriesList[i]);	
                     }
                 }
             }
-            glEnable(GL_BLEND);
-            glEnable(GL_TEXTURE_2D);
+            GL.Enable(EnableCap.Blend);
+            GL.Enable(EnableCap.Texture2D);
         }
 
 
@@ -173,10 +182,6 @@ namespace SplatterPlots
         {
             try
             {
-                //Bitmap bmp = new Bitmap(Width,Height);
-                //Graphics graphics = Graphics.FromImage(bmp);
-                //paint(graphics);
-                //e.Graphics.DrawImageUnscaled(bmp, 0, 0);
                 glPaint();
             }
             catch (Exception ex)
@@ -240,102 +245,89 @@ namespace SplatterPlots
             GL.MatrixMode(MatrixMode.Modelview);
         }
 
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // SplatterView
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.Name = "SplatterView";
+            this.ResumeLayout(false);
 
-        //void RenderArea1::setGroupEnabled(string name, bool val){
-        //    splatPM->SetEnabled(name, val);
-        //    update();
-        //}
-        //void RenderArea1::setSplatPM(shared_ptr<SplatGL> spm){
-        //    int www = width();
-        //    QPSIZE1 = width();
-        //    screenOffsetX = QPSIZE1/2.0;
-        //    screenOffsetY = QPSIZE1/2.0;
-        //    path = QPainterPath();
-        //    path.moveTo(0,0);
-        //    path.lineTo(QPSIZE1, 0);
-        //    path.lineTo(QPSIZE1,QPSIZE1);
-        //    path.lineTo(0, QPSIZE1);
-        //    path.lineTo(0, 0);
-        //    path.closeSubpath();
-
-        //    splatPM = spm;
-        //    if(densityMap.size()<=0){
-        //        for(unsigned int i=0;i<splatPM->seriesList.size();i++){
-        //            string temp = splatPM->seriesList[i]->name;
-        //            QString name = QString::fromStdString(temp);        
-        //            densityMap[name] = make_shared<DensityRenderer>();		
-        //        }
-        //    }
-        //}
-        
-
-        ////void RenderArea1::setBlendFactors(float Cf, float Lf){
-        ////    chromaF = Cf;
-        ////    lightnessF = Lf;
-        ////    update();
-        ////}
+        }
 
 
-        ////void RenderArea1::setBackCol(float f){
-        ////    backCol = QColor::fromRgbF(f,f,f);
-        ////    update();
-        ////}
+        void setGroupEnabled(string name, bool val){
+            splatPM.SetEnabled(name, val);
+            Refresh();
+        }
 
-        
-        
+        void setSplatPM(SplatterModel spm)
+        {
+
+            screenOffsetX = Width / 2;
+            screenOffsetY = Height / 2;
+            splatPM = spm;
+
+            //if (densityMap.size() <= 0)
+            //{
+            //    foreach (var series in splatPM.seriesList.Values)
+            //    {
+            //        //densityMap[name] = make_shared<DensityRenderer>();		
+            //    }
+            //}
+        }
 
 
         
-        //void RenderArea1::renderSeries(shared_ptr<SeriesProjection> series, float angle) {
-        //    QString name = QString::fromStdString(series->name);
-        //    glMatrixMode(GL_MODELVIEW);
-        //    glClearColor(0,0,0,0);
-        //    glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+        void renderSeries(SeriesProjection series, float angle) {
+            
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.ClearColor(0, 0, 0, 0);
+            GL.Clear(ClearBufferMask.DepthBufferBit| ClearBufferMask.ColorBufferBit);
 
-        //    blurPoints(series);
+            //blurPoints(series);
 
-        //    densityMap[name]->Bind();
-        //    densityMap[name]->Shade(series->color.x(),series->color.y(),series->color.z(),angle,stripePeriod,stripeWidth,lowerLimit,gain);
-        //    densityMap[name]->UnBind();
-        //}
-        //void RenderArea1::blurPoints(shared_ptr<SeriesProjection> series){
-        //    QString name = QString::fromStdString(series->name);
-        //    densityMap[name]->Bind();
-        //    densityMap[name]->Clear();
-        //    paintPoints(series);
-        //    densityMap[name]->Blur(bandwidth,gain);
-        //    densityMap[name]->UnBind();
-        //}
-        //void RenderArea1::paintPoints(shared_ptr<SeriesProjection> series){	
-        //    glMatrixMode(GL_MODELVIEW);
-        //    glClearColor(0,0,0,0);
-        //    glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
-        //    this->setZoomPan();
+            //densityMap[name]->Bind();
+            //densityMap[name]->Shade(series->color.x(),series->color.y(),series->color.z(),angle,stripePeriod,stripeWidth,lowerLimit,gain);
+            //densityMap[name]->UnBind();
+        }
+        void blurPoints(SeriesProjection series){
+            
+            //densityMap[name]->Bind();
+            //densityMap[name]->Clear();
+            //paintPoints(series);
+            //densityMap[name]->Blur(bandwidth,gain);
+            //densityMap[name]->UnBind();
+        }
+        void paintPoints(SeriesProjection series){	
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.ClearColor(0,0,0,0);
+            GL.Clear(ClearBufferMask.DepthBufferBit| ClearBufferMask.ColorBufferBit);
+            //this->setZoomPan();
 
-        //    glPushMatrix();
-        //    glPointSize(1);
-        //    glColor3f(1,0,0);
-        //    glBegin(GL_POINTS);
-        //    for(int k=0;k<series->dataPoints.size();k++){
-        //        const MathVec2D<float> &xy = series->dataPoints[k];
+            GL.PushMatrix();
+            GL.PointSize(1);
+            GL.Color3(1,0,0);
+            GL.Begin( BeginMode.Points);
+            foreach (var point in series.dataPoints)
+            {
+                GL.Vertex2(point);
+            }            
 
-        //        float x = xy.x();
-        //        float y = xy.y();
-        //        glVertex2f(x,y);
-        //    }
+            GL.End();
+            GL.PopMatrix();
+        }
+        void setZoomPan(){
+            
+            GL.LoadMatrix(Matrix4.Identity);
 
-        //    glEnd();
-        //    glPopMatrix();
-        //}
-        //void RenderArea1::setZoomPan(){
-        //    QMatrix4x4 imat;
-        //    glLoadMatrixd(imat.constData());
-
-        //    glTranslatef(screenOffsetX, height()-screenOffsetY, 0);
-        //    glScalef(totalScaleX(), totalScaleY(), 1);
-        //    glTranslatef(offsetX, -offsetY, 0);
-        //    //glScalef(1, -1, 1);
-        //}
+            GL.Translate(screenOffsetX, Height - screenOffsetY, 0);
+            GL.Scale(totalScaleX(), totalScaleY(), 1);
+            GL.Translate(offsetX, -offsetY, 0);
+            //glScalef(1, -1, 1);
+        }
         //void RenderArea1::bandwidthChanged(int value){
         //    bandwidth = value;
         //    update();
