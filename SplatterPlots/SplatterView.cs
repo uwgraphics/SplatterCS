@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using OpenTK.Graphics.OpenGL;
 using OpenTK;
+using QuickFont;
 
 namespace SplatterPlots
 {
@@ -52,13 +53,13 @@ namespace SplatterPlots
         public SplatterView()
         {
             InitializeComponent();
-                   offsetX = 0;
+            offsetX = 0;
             offsetY = 0;
 
             scaleX = 1;
             scaleY = 1;
             scaleFactorX = 1;
-            scaleFactorY = 1;	
+            scaleFactorY = 1;
 
             chromaF = .95f;
             lightnessF = .95f;
@@ -175,6 +176,8 @@ namespace SplatterPlots
             }
             GL.Enable(EnableCap.Blend);
             GL.Enable(EnableCap.Texture2D);
+
+            //    drawGrid(painter);
         }
 
 
@@ -199,7 +202,7 @@ namespace SplatterPlots
             GL.Disable(EnableCap.CullFace);
             GL.Enable(EnableCap.Blend);
             GL.Enable(EnableCap.DepthTest);
-            
+
             GL.Enable(EnableCap.Texture2D);
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
@@ -258,7 +261,8 @@ namespace SplatterPlots
         }
 
 
-        void setGroupEnabled(string name, bool val){
+        void setGroupEnabled(string name, bool val)
+        {
             splatPM.SetEnabled(name, val);
             Refresh();
         }
@@ -280,12 +284,13 @@ namespace SplatterPlots
         }
 
 
-        
-        void renderSeries(SeriesProjection series, float angle) {
-            
+
+        void renderSeries(SeriesProjection series, float angle)
+        {
+
             GL.MatrixMode(MatrixMode.Modelview);
             GL.ClearColor(0, 0, 0, 0);
-            GL.Clear(ClearBufferMask.DepthBufferBit| ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
 
             //blurPoints(series);
 
@@ -293,38 +298,41 @@ namespace SplatterPlots
             //densityMap[name]->Shade(series->color.x(),series->color.y(),series->color.z(),angle,stripePeriod,stripeWidth,lowerLimit,gain);
             //densityMap[name]->UnBind();
         }
-        void blurPoints(SeriesProjection series){
-            
+        void blurPoints(SeriesProjection series)
+        {
+
             //densityMap[name]->Bind();
             //densityMap[name]->Clear();
             //paintPoints(series);
             //densityMap[name]->Blur(bandwidth,gain);
             //densityMap[name]->UnBind();
         }
-        void paintPoints(SeriesProjection series){	
+        void paintPoints(SeriesProjection series)
+        {
             GL.MatrixMode(MatrixMode.Modelview);
-            GL.ClearColor(0,0,0,0);
-            GL.Clear(ClearBufferMask.DepthBufferBit| ClearBufferMask.ColorBufferBit);
+            GL.ClearColor(0, 0, 0, 0);
+            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             //this->setZoomPan();
 
             GL.PushMatrix();
             GL.PointSize(1);
-            GL.Color3(1,0,0);
-            GL.Begin( BeginMode.Points);
+            GL.Color3(1, 0, 0);
+            GL.Begin(BeginMode.Points);
             foreach (var point in series.dataPoints)
             {
                 GL.Vertex2(point);
-            }            
+            }
 
             GL.End();
             GL.PopMatrix();
         }
-        void setZoomPan(){
-            
-            GL.LoadMatrix(Matrix4.Identity);
+        void setZoomPan()
+        {
+
+            GL.LoadMatrix(ref Matrix4.Identity);
 
             GL.Translate(screenOffsetX, Height - screenOffsetY, 0);
-            GL.Scale(totalScaleX(), totalScaleY(), 1);
+            GL.Scale(totalScaleX, totalScaleY, 1);
             GL.Translate(offsetX, -offsetY, 0);
             //glScalef(1, -1, 1);
         }
@@ -347,283 +355,150 @@ namespace SplatterPlots
         //void RenderArea1::stripeWidthChanged(int value){
         //    stripeWidth = value;
         //    update();
-        //}
-        //void RenderArea1::paintEvent(QPaintEvent * event){
-        //    paintGL();//////////////////////////////////////////////
+        //}      
 
 
-        //    float llon = transformX(-125.5f);
-        //    float hlon = transformX(-66.5f);
-        //    float llat = transformY(24.2f);
-        //    float hlat = transformY(49.8f);
-
-        //    QRectF rf(llon,hlat,hlon-llon,llat-hlat);
-        //    QPainter painter(this);     
-        //    painter.setRenderHint(QPainter::Antialiasing);
-        //    //usMap->render(&painter,rf);
-        //    //QGLWidget::paintEvent(event);
-        //    //paintGL();//////////////////////////////////////////////
-        //    //glEnable(GL_MULTISAMPLE);    
+        void drawGrid()
+        {
+            QFont font = new QFont(Font);
 
 
+            //do minor lines first
+            float min = unTransformY(Height);
+            float max = unTransformY(0);
 
+            int exp = (int)(Math.Floor(Math.Log10(max - min)));
+            double d = Math.Pow(10.0, exp);
+            d *= .1;
+            //if((max-min)/d < 3) d*=.1;
 
-        //    paint(painter);
-        //    painter.end();
-        //}
-        //void RenderArea1::paint(QPainter &painter){
-        //    painter.setBackground(QBrush(backCol));
-        //    penColor = QColor::fromRgb(0,0,0);
-        //    painter.setPen(QPen(penColor, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));     
-        //    painter.setBrush(Qt::NoBrush);
-        //    painter.drawPath(path);
+            double graphmin = Math.Floor(min / d) * d;
+            double graphmax = Math.Ceiling(max / d) * d;
 
-        //    drawGrid(painter);
+            float alpha = (float)(1.0f - (150.0f - d * scaleY) / 150.0f);
+            alpha = Math.Max(alpha, 0.0f);
+            alpha = Math.Min(alpha, 1.0f);
 
-        //     // draw PM
-        //    if(splatPM != shared_ptr<SplatGL>()){
+            GL.Color4(0, 0, 0, alpha / 2.0f);
+            GL.LineWidth(1.5f);
+            GL.Begin(BeginMode.Lines);
+            for (double y = graphmin; y < graphmax + .5 * d; y += d)
+            {
+                int yi = transformY(y);
+                GL.Vertex2(0, yi);
+                GL.Vertex2(Width, yi);
+            }
+            GL.End();
+            //now major
+            d *= 10;
+            graphmin = Math.Floor(min / d) * d;
+            graphmax = Math.Ceiling(max / d) * d;
+            alpha = (float)(1.0f - (150.0 - d * scaleY) / 150.0);
+            alpha = Math.Max(alpha, 0.0f);
+            alpha = Math.Min(alpha, 1.0f);
 
-        //        for(unsigned int i=0; i<splatPM->seriesList.size();i++){
-        //            // draw Series
-        //            shared_ptr<SeriesProjection> series = splatPM->seriesList[i];            
-        //            //drawPoints(series,painter);
-        //        }
-        //    }
+            GL.Color4(0, 0, 0, alpha / 2.0f);
+            for (double y = graphmin; y < graphmax + .5 * d; y += d)
+            {
+                int yi = transformY(y);
+                GL.Vertex2(0, yi);
+                GL.Vertex2(Width, yi);
+                font.Print(string.Format("{0:D2}", y), new Vector2(15, yi));
+            }
+            ///////////////////////////////////////////////////////////////
 
-        //    //painter.drawRect(rectf);
-        //}
+            ////do minor lines first
+            min = unTransformX(0);
+            max = unTransformX(Width);
 
-        //void RenderArea1::drawGrid(QPainter &painter){
-        //    QFont font = painter.font();
-        //    font.setPointSize(12);
-        //    painter.setFont(font);
+            exp = (int)(Math.Floor(Math.Log10(max - min)));
+            d = Math.Pow(10.0, exp);
+            d *= .1;
+            //if((max-min)/d < 3) d*=.1;
 
-        //    //do minor lines first
-        //    float min = this->unTransformY(QPSIZE1);
-        //    float max = this->unTransformY(0);
+            graphmin = Math.Floor(min / d) * d;
+            graphmax = Math.Ceiling(max / d) * d;
 
-        //    int exp = floor(log10(max-min));
-        //    double d = pow(10.0,exp);
-        //    d*=.1;
-        //    //if((max-min)/d < 3) d*=.1;
+            alpha = (float)(1.0 - (150.0 - d * totalScaleX) / 150.0);
+            alpha = Math.Max(alpha, 0.0f);
+            alpha = Math.Min(alpha, 1.0f);
 
-        //    double graphmin = floor(min/d)*d;
-        //    double graphmax = ceil(max/d)*d;
+            GL.Color4(0, 0, 0, alpha / 2.0f);
+            for (double x = graphmin; x < graphmax + .5 * d; x += d)
+            {
+                int xi = transformX(x);
+                GL.Vertex2(xi, 0);
+                GL.Vertex2(xi, Height);
+            }
+            //now major
+            d *= 10;
+            graphmin = Math.Floor(min / d) * d;
+            graphmax = Math.Ceiling(max / d) * d;
+            alpha = (float)(1.0 - (150.0 - d * totalScaleX) / 150.0);
+            alpha = Math.Max(alpha, 0.0f);
+            alpha = Math.Min(alpha, 1.0f);
 
-        //    float alpha = 1.f - (150.0 - d*scaleY)/150.0;
-        //    alpha = (std::max)(alpha,0.f);
-        //    alpha = (std::min)(alpha,1.f);
+            GL.Color4(0, 0, 0, alpha / 2.0f);
+            for (double x = graphmin; x < graphmax + .5 * d; x += d)
+            {
+                int xi = (int)transformX((float)x);
+                GL.Vertex2(xi, 0);
+                GL.Vertex2(xi, Height);
 
-        //    painter.setPen(QPen(QColor::fromRgbF(0,0,0,alpha/2.0), 1.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //    for(double y = graphmin;y<graphmax+.5*d;y+=d){
-        //        int yi = transformY(y);
-        //        painter.drawLine(0,yi,QPSIZE1,yi);
-        //    }
-        //    //now major
-        //    d*=10;
-        //    graphmin = floor(min/d)*d;
-        //    graphmax = ceil(max/d)*d;
-        //    alpha = 1.f - (150.0 - d*scaleY)/150.0;
-        //    alpha = (std::max)(alpha,0.f);
-        //    alpha = (std::min)(alpha,1.f);
+                font.Print(string.Format("{0:D2}", x), new Vector2(xi + 15, 15));
+            }
+        }
 
-        //    painter.setPen(QPen(QColor::fromRgbF(0,0,0,alpha/2.0), 1.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //    for(double y = graphmin;y<graphmax+.5*d;y+=d){
-        //        int yi = transformY(y);
-        //        painter.drawLine(0,yi,QPSIZE1,yi);
-        //        QString text;
-        //        text.setNum(y);
+        void drawPoints(SeriesProjection series)
+        {
+            GL.Enable(EnableCap.DepthTest);
+            double range = Math.Max(series.xmax - series.xmin, series.ymax - series.ymin);
 
-        //        painter.drawText(15,yi,text);
-        //    }
-        //    ///////////////////////////////////////////////////////////////
+            DensityRenderer renderer = densityMap[name];
 
-        //    ////do minor lines first
-        //    min = this->unTransformX(0);
-        //    max = this->unTransformX(QPSIZE1);
+            int num = (int)(Math.Ceiling(Width / clutterWindow));
+            num = Math.Max(num, 1);
 
-        //    exp = floor(log10(max-min));
-        //    d = pow(10.0,exp);
-        //    d*=.1;
-        //    //if((max-min)/d < 3) d*=.1;
+            int[] grid_1 = new int[(num - 1) * (num - 1)];
+            int[] grid = new int[num * num];
 
-        //    graphmin = floor(min/d)*d;
-        //    graphmax = ceil(max/d)*d;
+            int count = 0;
+            double cellsize = range / num;
 
-        //    alpha = 1.f - (150.0 - d*totalScaleX())/150.0;
-        //    alpha = (std::max)(alpha,0.f);
-        //    alpha = (std::min)(alpha,1.f);
+            float offx = transformX(0) - Math.Floor(transformX(0) / clutterWindow) * clutterWindow;
+            float offy = transformYGL(0) - Math.Floor(transformYGL(0) / clutterWindow) * clutterWindow;
 
-        //    painter.setPen(QPen(QColor::fromRgbF(0,0,0,alpha/2.0), 1.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //    for(double x = graphmin;x<graphmax+.5*d;x+=d){
-        //        int xi = transformX(x);
-        //        painter.drawLine(xi,0,xi,QPSIZE1);
-        //    }
-        //    //now major
-        //    d*=10;
-        //    graphmin = floor(min/d)*d;
-        //    graphmax = ceil(max/d)*d;
-        //    alpha = 1.f - (150.0 - d*totalScaleX())/150.0;
-        //    alpha = (std::max)(alpha,0.f);
-        //    alpha = (std::min)(alpha,1.f);
+            GL.PointSize(3);
+            GL.Color3(series.color);
+            GL.Begin(BeginMode.Points);
 
-        //    painter.setPen(QPen(QColor::fromRgbF(0,0,0,alpha/2.0), 1.5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //    for(double x = graphmin;x<graphmax+.5*d;x+=d){
-        //        int xi = transformX(x);
-        //        painter.drawLine(xi,0,xi,QPSIZE1);
-        //        QString text;
-        //        text.setNum(x);
+            for (int i = 0; i < series.dataPoints.Count; i++)
+            {
+                float xgl = transformX(series.dataPoints[i].X);
+                float ygl = transformYGL(series.dataPoints[i].Y);
+                int ix = (int)Math.Floor((xgl - offx) / clutterWindow);
+                int iy = (int)Math.Floor((ygl - offy) / clutterWindow);
+                bool allow = !(ix < 0 || ix >= num || iy < 0 || iy >= num);
 
-        //        painter.drawText(xi+15,15,text);
-        //    }
+                if (allow)
+                {
+                    int count = grid[ix * num + iy]++;
+                    allow = allow && count == 0;
+                }
 
-        //}
-        //void RenderArea1::drawPoints(shared_ptr<SeriesProjection> series, QPainter &painter){
-        //    double range = max(series->xmax - series->xmin, series->ymax - series->ymin);
+                float clutterRad = renderer->GetDist(xgl, ygl) * 2.f;
 
-        //    QString name = QString::fromStdString(series->name);
-        //    shared_ptr<DensityRenderer> renderer = densityMap[name];
+                if (/*splatPM->showAllPoints ||*/clutterRad > clutterWindow && allow)
+                {
 
-        //    int num = (int)(ceil(width()/clutterWindow));
-        //    num = max(num,1);
-
-        //    vector<int> grid_1((num-1)*(num-1),0);
-        //    vector<int> grid(num*num,0);
-        //    int count = 0;
-        //    double cellsize = range/num;
-
-        //    float offx = transformX(0) - floor(transformX(0)/clutterWindow)*clutterWindow;
-        //    float offy = transformYGL(0) - floor(transformYGL(0)/clutterWindow)*clutterWindow;	
-
-        //    for(unsigned int i=0;i<series->dataPoints.size();i++){  
-        //        float xgl = transformX(series->dataPoints[i].x());
-        //        float ygl = transformYGL(series->dataPoints[i].y());
-        //        int ix = (int)floor((xgl-offx)/clutterWindow);
-        //        int iy = (int)floor((ygl-offy)/clutterWindow);
-        //        bool allow = !(ix<0||ix>=num||iy<0||iy>=num);
-
-        //        if(allow){
-        //            int count = grid[ix*num + iy]++;
-        //            allow = allow && count == 0;
-        //        }
-
-        //        float clutterRad = renderer->GetDist(xgl, ygl)*2.f;
-
-        //        if(/*splatPM->showAllPoints ||*/clutterRad > clutterWindow && allow){
-
-
-        //            float x = transformX(series->dataPoints[i].x());
-        //            float y = transformY(series->dataPoints[i].y());
-        //            /*float x = ix*clutterWindow + clutterWindow/2 + offx;
-        //            float y = height() - (iy*clutterWindow + clutterWindow/2 + offy);*/
-
-        //            //if(splatPM->clutterRedux){        
-
-
-        //                //if(series->dataZval[i]<=num){
-        //                    QColor col = QColor::fromRgbF(series->color[0],series->color[1],series->color[2]);
-        //                    painter.setPen(QPen(QColor::fromRgbF(0,0,0), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //                    painter.setBrush(QBrush(col));
-        //                    painter.drawEllipse(x-5,y-5,10,10);
-        //                /*}else if(fade && series->dataZval[i]<=num*2){
-        //                    float alpha = 1.f - (series->dataZval[i]-num)/(num);
-        //                    alpha = max(alpha,0.f);
-        //                    alpha = min(alpha,1.f);
-        //                    QColor col = QColor::fromRgbF(series->color[0],series->color[1],series->color[2],alpha);
-        //                    painter.setPen(QPen(QColor::fromRgbF(0,0,0,alpha), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //                    painter.setBrush(QBrush(col));
-        //                    float dia = (5+5*alpha);
-        //                    painter.drawEllipse(x - dia/2.f,y - dia/2.f,dia,dia);
-        //                }*/
-        //            /*}else{
-        //                QColor col = QColor::fromRgbF(series->color[0],series->color[1],series->color[2]);
-        //                painter.setPen(QPen(QColor::fromRgbF(0,0,0), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //                painter.setBrush(QBrush(col));
-        //                painter.drawEllipse(x-5,y-5,10,10);
-        //            }*/
-        //        }
-        //    }
-        //    glEnd();	
-        //}
-        //void RenderArea1::drawPoints(shared_ptr<SeriesProjection> series){
-        //    glEnable(GL_DEPTH_TEST);
-        //    double range = max(series->xmax - series->xmin, series->ymax - series->ymin);
-
-        //    QString name = QString::fromStdString(series->name);
-        //    shared_ptr<DensityRenderer> renderer = densityMap[name];
-
-        //    int num = (int)(ceil(width()/clutterWindow));
-        //    num = max(num,1);
-
-        //    vector<int> grid_1((num-1)*(num-1),0);
-        //    vector<int> grid(num*num,0);
-        //    int count = 0;
-        //    double cellsize = range/num;
-
-        //    float offx = transformX(0) - floor(transformX(0)/clutterWindow)*clutterWindow;
-        //    float offy = transformYGL(0) - floor(transformYGL(0)/clutterWindow)*clutterWindow;	
-
-        //    /*glyphProgram->bind();
-        //    glyphProgram->setUniformValue("Brush",series->color.x(),series->color.y(),series->color.z());
-        //    glyphProgram->setUniformValue("Pen",0.0,0.0,0.0);*/
-
-        //    glPointSize(3);
-        //    glColor3f(series->color.x(),series->color.y(),series->color.z());
-        //    glBegin(GL_POINTS);
-
-        //    for(unsigned int i=0;i<series->dataPoints.size();i++){  
-        //        float xgl = transformX(series->dataPoints[i].x());
-        //        float ygl = transformYGL(series->dataPoints[i].y());
-        //        int ix = (int)floor((xgl-offx)/clutterWindow);
-        //        int iy = (int)floor((ygl-offy)/clutterWindow);
-        //        bool allow = !(ix<0||ix>=num||iy<0||iy>=num);
-
-        //        if(allow){
-        //            int count = grid[ix*num + iy]++;
-        //            allow = allow && count == 0;
-        //        }
-
-        //        float clutterRad = renderer->GetDist(xgl, ygl)*2.f;
-
-        //        if(/*splatPM->showAllPoints ||*/clutterRad > clutterWindow && allow){
-
-        //            glColor3f(series->color.x(),series->color.y(),series->color.z());
-        //            glVertex3f(series->dataPoints[i].x(),series->dataPoints[i].y(),series->dataZval[i]);
-        //            //float x = transformX(series->dataPoints[i].x());
-        //            //float y = transformY(series->dataPoints[i].y());
-        //            //float x = ix*clutterWindow + clutterWindow/2 + offx;
-        //            //float y = height() - (iy*clutterWindow + clutterWindow/2 + offy);
-
-        //            //if(splatPM->clutterRedux){        
-
-
-        //                //if(series->dataZval[i]<=num){
-        //                    /*QColor col = QColor::fromRgbF(series->color[0],series->color[1],series->color[2]);
-        //                    painter.setPen(QPen(QColor::fromRgbF(0,0,0), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //                    painter.setBrush(QBrush(col));
-        //                    painter.drawEllipse(x-5,y-5,10,10);*/
-        //                /*}else if(fade && series->dataZval[i]<=num*2){
-        //                    float alpha = 1.f - (series->dataZval[i]-num)/(num);
-        //                    alpha = max(alpha,0.f);
-        //                    alpha = min(alpha,1.f);
-        //                    QColor col = QColor::fromRgbF(series->color[0],series->color[1],series->color[2],alpha);
-        //                    painter.setPen(QPen(QColor::fromRgbF(0,0,0,alpha), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //                    painter.setBrush(QBrush(col));
-        //                    float dia = (5+5*alpha);
-        //                    painter.drawEllipse(x - dia/2.f,y - dia/2.f,dia,dia);
-        //                }*/
-        //            /*}else{
-        //                QColor col = QColor::fromRgbF(series->color[0],series->color[1],series->color[2]);
-        //                painter.setPen(QPen(QColor::fromRgbF(0,0,0), 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        //                painter.setBrush(QBrush(col));
-        //                painter.drawEllipse(x-5,y-5,10,10);
-        //            }*/
-        //        }
-        //    }
-        //    glEnd();
-        //    glDisable(GL_DEPTH_TEST);
-        //    //glyphProgram->release();
-        //}
+                    GL.Color3(series.color);
+                    GL.Vertex3(series.dataPoints[i].X, series.dataPoints[i].Y, series.dataZval[i]);
+                }
+            }
+            GL.End();
+            GL.Disable(EnableCap.DepthTest);
+            //glyphProgram->release();
+        }
         //void RenderArea1::mousePressEvent(QMouseEvent *event){
         //    panEnabled = true;
         //    panOrigX = event->x();
@@ -651,24 +526,29 @@ namespace SplatterPlots
         //    update();
         //    event->accept();
         //}
-        //float RenderArea1::unTransformX(float x){
-        //    return (x - screenOffsetX)/totalScaleX() - offsetX;
-        //}
-        //float RenderArea1::unTransformY(float y){
-        //    return -((y - screenOffsetY)/totalScaleY() - offsetY);
-        //}
-        ///*float RenderArea1::unTransformYGL(float y){
-        //    return -((y - (height()-screenOffsetY))/totalScaleY() + offsetY);
-        //}*/
-        //float RenderArea1::transformX(float x){
-        //    return (x+offsetX)*totalScaleX()+screenOffsetX;
-        //}
-        //float RenderArea1::transformYGL(float y){
-        //    return (y-offsetY)*totalScaleY()+(height()-screenOffsetY);	
-        //}
-        //float RenderArea1::transformY(float y){
-        //    return (-y+offsetY)*totalScaleY()+screenOffsetY;    
-        //}
+        float unTransformX(float x)
+        {
+            return (x - screenOffsetX) / totalScaleX - offsetX;
+        }
+        float unTransformY(float y)
+        {
+            return -((y - screenOffsetY) / totalScaleY - offsetY);
+        }
+        /*float RenderArea1::unTransformYGL(float y){
+            return -((y - (height()-screenOffsetY))/totalScaleY() + offsetY);
+        }*/
+        float transformX(float x)
+        {
+            return (x + offsetX) * totalScaleX + screenOffsetX;
+        }
+        float transformYGL(float y)
+        {
+            return (y - offsetY) * totalScaleY + (Height - screenOffsetY);
+        }
+        float transformY(float y)
+        {
+            return (-y + offsetY) * totalScaleY + screenOffsetY;
+        }
         //void RenderArea1::scaleFactorXChanged(int value){
         //    float v = value/10.f;
         //    scaleFactorX = pow((1.0f/.9f),v);
