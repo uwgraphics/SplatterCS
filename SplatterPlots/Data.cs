@@ -28,10 +28,6 @@ namespace SplatterPlots
         private DataTable m_table;
         //private DataView m_view;
         private bool isSet = false;
-
-        private List<double> m_X;
-        private List<double> m_Y;
-        private List<Vector2> m_XY;
         #endregion
 
         #region Construction
@@ -73,14 +69,14 @@ namespace SplatterPlots
             bool hasNames = false;
             foreach (var col in cols)
             {
-                double dummy;
-                hasNames = hasNames || !double.TryParse(col, out dummy);
+                float dummy;
+                hasNames = hasNames || !float.TryParse(col, out dummy);
             }
             if (hasNames)
             {
                 foreach (var col in cols)
                 {
-                    m_table.Columns.Add(col, typeof(double));
+                    m_table.Columns.Add(col, typeof(float));
                 }
                 lines.RemoveAt(0);
             }
@@ -88,13 +84,13 @@ namespace SplatterPlots
             {
                 for (int i = 0; i < cols.Length; i++)
                 {
-                    m_table.Columns.Add(i.ToString(), typeof(double));
+                    m_table.Columns.Add(i.ToString(), typeof(float));
                 }
             }
 
             foreach (var line in lines)
             {
-                m_table.Rows.Add(line.Split(',', '\t').Select(obj => (object)(double.Parse(obj))).ToArray());
+                m_table.Rows.Add(line.Split(',', '\t').Select(obj => (object)(float.Parse(obj))).ToArray());
             }
             process();
         }

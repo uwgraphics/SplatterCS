@@ -72,13 +72,13 @@ namespace SplatterPlots
         {
             seriesList[group].enabled = value;
         }
-        public Dictionary<string,SeriesProjection> seriesList;
+        public Dictionary<string,SeriesProjection> seriesList=new Dictionary<string,SeriesProjection>();
 
         public bool showAllPoints;
-        public double xmax;
-        public double xmin;
-        public double ymax;
-        public double ymin;
+        public float xmax;
+        public float xmin;
+        public float ymax;
+        public float ymin;
 
         public string dim0Name;
         public string dim1Name;
