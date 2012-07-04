@@ -142,7 +142,7 @@ namespace SplatterPlots
             //rectf = QRectF(transformX(xmin),transformY(ymin),transformX(xmax)-transformX(xmin),transformY(ymax)-transformY(ymin));
 
             offsetX = -(xmax + xmin) / 2.0f;
-            offsetY = (ymax + ymin) / 2.0f;
+            offsetY = -(ymax + ymin) / 2.0f;
 
             float rangeX = (xmax - xmin);
             float rangeY = (ymax - ymin);
@@ -210,14 +210,10 @@ namespace SplatterPlots
                 return;
             }
             loaded = true;
-
+            this.MakeCurrent();
+            
             GL.Enable(EnableCap.Multisample);
-
             GL.Disable(EnableCap.CullFace);
-            GL.Enable(EnableCap.Blend);
-            GL.Enable(EnableCap.DepthTest);
-
-            GL.Enable(EnableCap.Texture2D);
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
             string nam = this.Name;
@@ -265,7 +261,7 @@ namespace SplatterPlots
         {
             panEnabled = true;
             panOrigX = e.X;
-            panOrigY = e.Y;
+            panOrigY = (Height - e.Y);
         }
         private void SplatterView_MouseMove(object sender, MouseEventArgs e)
         {
@@ -274,8 +270,8 @@ namespace SplatterPlots
                 screenOffsetX += e.X - panOrigX;
                 panOrigX = e.X;
 
-                screenOffsetY += e.Y - panOrigY;
-                panOrigY = e.Y;
+                screenOffsetY += (Height - e.Y) - panOrigY;
+                panOrigY = (Height - e.Y);
             }
             Refresh();
         }
@@ -294,11 +290,11 @@ namespace SplatterPlots
         {
             if (e.Delta < 0)
             {
-                scrollOut(e.X, e.Y);
+                scrollOut(e.X, Height - e.Y);
             }
             else
             {
-                scrollIn(e.X, e.Y);
+                scrollIn(e.X, Height - e.Y);
             }
         }
         private void scrollIn(float x, float y)
@@ -313,7 +309,7 @@ namespace SplatterPlots
             screenOffsetY = (int)y;
 
             offsetX = -dx;
-            offsetY = dy;
+            offsetY = -dy;
 
             Refresh();
         }
@@ -329,7 +325,7 @@ namespace SplatterPlots
             screenOffsetY = (int)y;
 
             offsetX = -dx;
-            offsetY = dy;
+            offsetY = -dy;
 
             Refresh();
         }
@@ -342,8 +338,11 @@ namespace SplatterPlots
                 return;
             this.MakeCurrent();
 
-           /* int N = 0;
+            int N = 0;
             int I = 0;
+                        
+            GL.Enable(EnableCap.Texture2D);
+            GL.Disable(EnableCap.Blend);
             foreach (var series in splatPM.seriesList.Values)
             {
                 if (series.enabled)
@@ -367,7 +366,8 @@ namespace SplatterPlots
             GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             GL.Disable(EnableCap.Blend);
-            //GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            bool val = GL.IsEnabled(EnableCap.Blend);
+
             if (contours)
             {
                 blendProgram.Bind();
@@ -391,16 +391,8 @@ namespace SplatterPlots
                 blendProgram.Release();
             }
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, 0);
-            */
-            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-            GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
-            GL.MatrixMode(MatrixMode.Modelview);
-            GL.Enable(EnableCap.Blend);
-            
+            GL.BindTexture(TextureTarget.Texture2D, 0);            
             GL.Disable(EnableCap.Texture2D);
-            GL.LoadMatrix(ref Matrix4.Identity);
-            drawGrid();
             GL.Disable(EnableCap.Blend);
             setZoomPan();
 
@@ -414,14 +406,15 @@ namespace SplatterPlots
                     }
                 }
             }
-            
             GL.Enable(EnableCap.Blend);
-            GL.Enable(EnableCap.Texture2D);
-                       
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.LoadMatrix(ref Matrix4.Identity);
+            //drawGrid();
             this.SwapBuffers();
         }    
         void renderSeries(SeriesProjection series, float angle)
         {
+            
             GL.MatrixMode(MatrixMode.Modelview);
             GL.ClearColor(0, 0, 0, 0);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
@@ -442,14 +435,19 @@ namespace SplatterPlots
         }
         void paintPoints(SeriesProjection series)
         {
+            GL.PushMatrix();
+            GL.PushAttrib(AttribMask.EnableBit);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.One, BlendingFactorDest.One);
+
             GL.MatrixMode(MatrixMode.Modelview);
             GL.ClearColor(0, 0, 0, 0);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             setZoomPan();
 
-            GL.PushMatrix();
+            
             GL.PointSize(1);
-            GL.Color3(1.0f, 0, 0);
+            GL.Color4(1.0f, 0, 0,1.0f);
             GL.Begin(BeginMode.Points);
             foreach (var point in series.dataPoints)
             {
@@ -457,24 +455,31 @@ namespace SplatterPlots
             }
 
             GL.End();
+            GL.PopAttrib();
             GL.PopMatrix();
         }
         void setZoomPan()
         {
             GL.LoadMatrix(ref Matrix4.Identity);
 
-            GL.Translate(screenOffsetX, Height - screenOffsetY, 0);
+            GL.Translate(screenOffsetX, screenOffsetY, 0);
             GL.Scale(totalScaleX, totalScaleY, 1);
-            GL.Translate(offsetX, -offsetY, 0);
+            GL.Translate(offsetX, offsetY, 0);
             //glScalef(1, -1, 1);
         }
         void drawGrid()
         {
+            QFontBuilderConfiguration vonfig = new QFontBuilderConfiguration();
+            
+            
+            GL.PushAttrib(AttribMask.EnableBit);
             QFont font = new QFont(Font);
+            font.Options.Colour = new OpenTK.Graphics.Color4(0, 0, 0, 1.0f);
+            GL.PopAttrib();
 
             //do minor lines first
-            float min = unTransformY(Height);
-            float max = unTransformY(0);
+            float min = unTransformY(0);
+            float max = unTransformY(Height);
 
             int exp = (int)(Math.Floor(Math.Log10(max - min)));
             double d = Math.Pow(10.0, exp);
@@ -505,17 +510,22 @@ namespace SplatterPlots
             alpha = (float)(1.0f - (150.0 - d * scaleY) / 150.0);
             alpha = Math.Max(alpha, 0.0f);
             alpha = Math.Min(alpha, 1.0f);
-
-            GL.Color4(0, 0, 0, alpha / 2.0f);
-            GL.Begin(BeginMode.Lines);
+                        
             for (double y = graphmin; y < graphmax + .5 * d; y += d)
             {
+                GL.Color4(0.0f, 0.0f, 0, alpha / 2.0f);
+                GL.Begin(BeginMode.Lines);
                 int yi = (int)transformY((float)y);
                 GL.Vertex2(0, yi);
                 GL.Vertex2(Width, yi);
-                //font.Print(string.Format("{0:F2}", y), new Vector2(15, yi));
+                GL.End();
+                GL.PushAttrib(AttribMask.EnableBit);
+                QFont.Begin();
+                font.Print(string.Format("{0:G}", y), new Vector2(15, Height - yi));
+                QFont.End();
+                GL.PopAttrib();
             }
-            GL.End();
+            
             ///////////////////////////////////////////////////////////////
 
             ////do minor lines first
@@ -550,22 +560,27 @@ namespace SplatterPlots
             alpha = (float)(1.0 - (150.0 - d * totalScaleX) / 150.0);
             alpha = Math.Max(alpha, 0.0f);
             alpha = Math.Min(alpha, 1.0f);
-
-            GL.Color4(0, 0, 0, alpha / 2.0f);
-            GL.Begin(BeginMode.Lines);
+                        
             for (double x = graphmin; x < graphmax + .5 * d; x += d)
             {
+                GL.Color4(0, 0, 0, alpha / 2.0f);
+                GL.Begin(BeginMode.Lines);
                 int xi = (int)transformX((float)x);
                 GL.Vertex2(xi, 0);
                 GL.Vertex2(xi, Height);
-
-                //font.Print(string.Format("{0:F2}", x), new Vector2(xi + 15, 15));
+                GL.End();
+                GL.PushAttrib(AttribMask.EnableBit);
+                QFont.Begin();
+                font.Print(string.Format("{0:G}", x), new Vector2(xi + 15, 15));
+                QFont.End();
+                GL.PopAttrib();
             }
-            GL.End();
+            
         }
         void drawPoints(SeriesProjection series)
         {
             GL.Enable(EnableCap.DepthTest);
+            //GL.Enable(EnableCap.PointSmooth);
             double range = Math.Max(series.xmax - series.xmin, series.ymax - series.ymin);
 
             DensityRenderer renderer = densityMap[series.name];
@@ -579,16 +594,16 @@ namespace SplatterPlots
             double cellsize = range / num;
 
             float offx = transformX(0) - (float)(Math.Floor(transformX(0) / m_clutterWindow) * m_clutterWindow);
-            float offy = transformYGL(0) - (float)(Math.Floor(transformYGL(0) / m_clutterWindow) * m_clutterWindow);
+            float offy = transformY(0) - (float)(Math.Floor(transformY(0) / m_clutterWindow) * m_clutterWindow);
 
-            GL.PointSize(3);
-            GL.Color3(series.color);
+            GL.PointSize(5);
+            GL.Color3(series.color);            
             GL.Begin(BeginMode.Points);
 
             for (int i = 0; i < series.dataPoints.Count; i++)
             {
                 float xgl = transformX(series.dataPoints[i].X);
-                float ygl = transformYGL(series.dataPoints[i].Y);
+                float ygl = transformY(series.dataPoints[i].Y);
                 int ix = (int)Math.Floor((xgl - offx) / m_clutterWindow);
                 int iy = (int)Math.Floor((ygl - offy) / m_clutterWindow);
                 bool allow = !(ix < 0 || ix >= num || iy < 0 || iy >= num);
@@ -605,8 +620,8 @@ namespace SplatterPlots
                 //if (allow)
                 {
 
-                    GL.Color3(series.color);
-                    GL.Vertex3(series.dataPoints[i].X, series.dataPoints[i].Y, series.dataZval[i]);
+                    //GL.Color3(series.color);
+                    GL.Vertex3(series.dataPoints[i].X, series.dataPoints[i].Y, series.dataZval[i]);                    
                 }
             }
             GL.End();
@@ -622,23 +637,23 @@ namespace SplatterPlots
         }
         private float unTransformY(float y)
         {
-            return -((y - screenOffsetY) / totalScaleY - offsetY);
+            return (y - screenOffsetY) / totalScaleY - offsetY;
         }
-        /*float RenderArea1::unTransformYGL(float y){
-            return -((y - (height()-screenOffsetY))/totalScaleY() + offsetY);
-        }*/
+        //private float unTransformYGL(float y){
+        //    return -((y - (Height - screenOffsetY)) / totalScaleY + offsetY);
+        //}
         private float transformX(float x)
         {
             return (x + offsetX) * totalScaleX + screenOffsetX;
         }
-        private float transformYGL(float y)
-        {
-            return (y - offsetY) * totalScaleY + (Height - screenOffsetY);
-        }
         private float transformY(float y)
         {
-            return (-y + offsetY) * totalScaleY + screenOffsetY;
+            return (y + offsetY) * totalScaleY + screenOffsetY;
         }
+        //private float transformYGL(float y)
+        //{
+        //    return (y - offsetY) * totalScaleY + (Height - screenOffsetY);
+        //}        
         #endregion
 
 

@@ -34,17 +34,21 @@ namespace SplatterPlots
                     List<Color> colors = new List<Color>();
                     colors.Add(Color.BurlyWood);
                     SplatterModel pm = new SplatterModel(datas,colors,0,1);
+                    SplatterModel pm12 = new SplatterModel(datas, colors, 0, 1);
                     sw.Stop();
                     double ms = sw.ElapsedMilliseconds;
                     Console.WriteLine(ms);
-                    splatterView1.setSplatPM(pm);
-                    splatterView1.setBBox(pm.xmin, pm.ymin, pm.xmax, pm.ymax);
+                    //splatterView1.setSplatPM(pm);
+                    //splatterView1.setBBox(pm.xmin, pm.ymin, pm.xmax, pm.ymax);
+
+                    splatterView2.setSplatPM(pm12);
+                    splatterView2.setBBox(pm12.xmin, pm12.ymin, pm12.xmax, pm12.ymax);
                 }
                 catch (Exception ex)
                 {
                     int g = 0;
                 }
-            }            
+            }
         }
     }
 }

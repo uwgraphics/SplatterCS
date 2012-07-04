@@ -102,7 +102,7 @@ namespace SplatterPlots
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, textureHandle0);
 
-            GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             GL.PushMatrix();
@@ -123,7 +123,7 @@ namespace SplatterPlots
             GL.BindTexture(TextureTarget.Texture2D, textureHandle1);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, textureHandle0, 0);
 
-            GL.ClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+            GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             vec[0] = 0; vec[1] = 1;
             SetShaderUniforms(kw, sigma, vec);
@@ -171,7 +171,7 @@ namespace SplatterPlots
             coloring.SetUniform("maxVal", maxVal);
 
             GL.LoadMatrix(ref Matrix4.Identity);
-            GL.Color4(1.0f, 1.0f, 1.0f, 0.0f);
+            GL.Color4(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Begin(BeginMode.Quads);
                 GL.TexCoord2(0, 0);
                 GL.Vertex2(0, 0);
