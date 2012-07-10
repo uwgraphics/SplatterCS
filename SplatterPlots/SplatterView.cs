@@ -56,6 +56,7 @@ namespace SplatterPlots
         #endregion
 
         #region Public Properties
+        public SplatterModel Model { get { return splatPM; } }
         public float Bandwidth
         {
             get { return m_bandwidth; }
@@ -111,6 +112,17 @@ namespace SplatterPlots
         #region Construction
         public SplatterView()
         {
+            m_scaleFactorX = 1;
+            m_scaleFactorY = 1;
+            m_chromaF = .95f;
+            m_lightnessF = .95f;
+            m_clutterWindow = 30.0f;
+            m_bandwidth = 10;
+            m_gain = 1;
+            m_lowerLimit = 0;
+            m_stripePeriod = 50;
+            m_stripeWidth = 1;
+
             InitializeComponent();
             offsetX = 0;
             offsetY = 0;
@@ -118,17 +130,6 @@ namespace SplatterPlots
             scaleX = 1;
             scaleY = 1;
 
-            /*m_scaleFactorX = 1;
-            m_scaleFactorY = 1;
-
-            m_chromaF = .95f;
-            m_lightnessF = .95f;            
-
-            m_clutterWindow = 30.0f;
-            m_bandwidth = 10;
-            m_gain = 1;
-            m_lowerLimit = 0;
-            */
             panEnabled = false;
             fade = true;
             this.MouseWheel += new MouseEventHandler(SplatterView_MouseWheel);
@@ -136,7 +137,7 @@ namespace SplatterPlots
         #endregion
 
         #region Public Methods
-        public void setBBox(float xmin, float ymin, float xmax, float ymax)
+        private void setBBox(float xmin, float ymin, float xmax, float ymax)
         {
             int www = Width;
             //rectf = QRectF(transformX(xmin),transformY(ymin),transformX(xmax)-transformX(xmin),transformY(ymax)-transformY(ymin));
@@ -180,11 +181,13 @@ namespace SplatterPlots
             }
             if (loaded)
             {
+                MakeCurrent();
                 foreach (var denisty in densityMap.Values)
                 {
-                    denisty.Init(Width, Height);
+                    denisty.Init(Width, Height,Context);
                 }
             }
+            setBBox(spm.xmin, spm.ymin, spm.xmax, spm.ymax);
         }
         #endregion
 
@@ -217,7 +220,7 @@ namespace SplatterPlots
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
             string nam = this.Name;
-            blendProgram = new ShaderProgram("blur.vert", "blend.frag");
+            blendProgram = new ShaderProgram("blur.vert", "blend.frag",Context);
             //blendProgram.->setParent(this);                
             blendProgram.Link();
 
@@ -240,7 +243,7 @@ namespace SplatterPlots
 
             foreach (var denisty in densityMap.Values)
             {
-                denisty.Init(Width, Height);
+                denisty.Init(Width, Height,Context);
             }
         }
         private void SplatterView_Resize(object sender, EventArgs e)
@@ -409,7 +412,7 @@ namespace SplatterPlots
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.LoadMatrix(ref Matrix4.Identity);
-            //drawGrid();
+            drawGrid();
             this.SwapBuffers();
         }    
         void renderSeries(SeriesProjection series, float angle)
@@ -520,9 +523,9 @@ namespace SplatterPlots
                 GL.Vertex2(Width, yi);
                 GL.End();
                 GL.PushAttrib(AttribMask.EnableBit);
-                QFont.Begin();
-                font.Print(string.Format("{0:G}", y), new Vector2(15, Height - yi));
-                QFont.End();
+                QFontBegin();
+                font.Print(string.Format("{0:G}", y), new Vector2(5, Height - yi));
+                QFontEnd();
                 GL.PopAttrib();
             }
             
@@ -570,12 +573,33 @@ namespace SplatterPlots
                 GL.Vertex2(xi, Height);
                 GL.End();
                 GL.PushAttrib(AttribMask.EnableBit);
-                QFont.Begin();
-                font.Print(string.Format("{0:G}", x), new Vector2(xi + 15, 15));
-                QFont.End();
+                QFontBegin();
+                font.Print(string.Format("{0:G}", x), new Vector2(xi + 15, 5));
+                QFontEnd();
                 GL.PopAttrib();
             }
             
+        }
+        private void QFontBegin()
+        {
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.PushMatrix(); //push projection matrix            
+            var M = Matrix4.CreateOrthographicOffCenter(ClientRectangle.X, ClientRectangle.Width, ClientRectangle.Height, ClientRectangle.Y, -1, 1);
+            GL.LoadMatrix(ref M);
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.PushMatrix();  //push modelview matrix
+            GL.LoadIdentity();
+        }
+
+        private void QFontEnd()
+        {
+            GL.MatrixMode(MatrixMode.Modelview);
+            GL.PopMatrix(); //pop modelview
+
+            GL.MatrixMode(MatrixMode.Projection);
+            GL.PopMatrix(); //pop projection
+
+            GL.MatrixMode(MatrixMode.Modelview);
         }
         void drawPoints(SeriesProjection series)
         {
@@ -655,48 +679,6 @@ namespace SplatterPlots
         //    return (y - offsetY) * totalScaleY + (Height - screenOffsetY);
         //}        
         #endregion
-
-
-        //void RenderArea1::scaleFactorXChanged(int value){
-        //    float v = value/10.f;
-        //    scaleFactorX = pow((1.0f/.9f),v);
-        //    update();
-        //} 
-        //void RenderArea1::scaleFactorYChanged(int value){
-        //    float v = value/10.f;
-        //    scaleFactorY = pow((1.0f/.9f),v);
-        //    update();
-        //}
-        //void RenderArea1::chromaFactorChanged(int value){
-        //    float v = value/100.0f;
-        //    chromaF = v;
-        //    update();
-        //}
-        //void RenderArea1::lightnessFactorChanged(int value){
-        //    float v = value/100.0f;
-        //    lightnessF = v;
-        //    update();
-        //}                
-        //void RenderArea1::bandwidthChanged(int value){
-        //    bandwidth = value;
-        //    update();
-        //}
-        //void RenderArea1::gainChanged(int value){
-        //    gain = value/100.0f;
-        //    update();
-        //}
-        //void RenderArea1::lowerLimitChanged(int value){
-        //    lowerLimit = value/100.f;
-        //    update();
-        //}
-        //void RenderArea1::stripePeriodChanged(int value){
-        //    stripePeriod = value;
-        //    update();
-        //}
-        //void RenderArea1::stripeWidthChanged(int value){
-        //    stripeWidth = value;
-        //    update();
-        //}              
         #endregion
     }
 }

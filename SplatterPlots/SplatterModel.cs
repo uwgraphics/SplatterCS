@@ -10,12 +10,11 @@ namespace SplatterPlots
 
     public class SeriesProjection
     {
-        private Data m_Data;
-        public void Init(Color col, Data data, string d0, string d1)
+        private DataSeries m_Data;
+        public void Init(DataSeries data, string d0, string d1)
         {
             m_Data = data;
-            enabled = true;
-            color = col;
+            enabled = true;            
             name = data.Name;
             dim0 = d0;
             dim1 = d1;
@@ -30,7 +29,7 @@ namespace SplatterPlots
         public List<Vector2> dataPoints { get; private set; }
         public List<float> dataZval { get; private set; }
 
-        public Color color{ get; private set; }
+        public Color color { get { return m_Data.Color; } }
         public string name { get; private set; }
 
         public float xmax { get { return m_Data.ColumnData[dim0].Max; } }
@@ -44,7 +43,7 @@ namespace SplatterPlots
 
     public class SplatterModel
     {
-        public SplatterModel(List<Data> datas, List<Color> colors, int d0, int d1)
+        public SplatterModel(List<DataSeries> datas, int d0, int d1)
         {
             xmax = float.MinValue;
             xmin = float.MaxValue;
@@ -58,7 +57,7 @@ namespace SplatterPlots
             for (int i = 0; i < datas.Count; i++)
             {
                 SeriesProjection sp = new SeriesProjection();
-                sp.Init(colors[i], datas[i], dim0Name, dim1Name);
+                sp.Init(datas[i], dim0Name, dim1Name);
                 seriesList[datas[i].Name]=sp;
 
                 xmax = Math.Max(xmax, sp.xmax);

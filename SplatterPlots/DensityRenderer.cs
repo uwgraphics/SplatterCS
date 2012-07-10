@@ -8,13 +8,12 @@ using OpenTK;
 namespace SplatterPlots
 {
     public class DensityRenderer
-    {
-
+    {        
         public DensityRenderer()
-        {
+        {            
         }
 
-        public void Init(int w, int h)
+        public void Init(int w, int h, OpenTK.Graphics.IGraphicsContext context)
         {
             Width = w;
             Height = h;
@@ -75,13 +74,13 @@ namespace SplatterPlots
             temp = -99;
             GL.GetInteger(GetPName.DrawBuffer, out temp);
 
-            blurProgram = new ShaderProgram("blur.vert","blur.frag");
+            blurProgram = new ShaderProgram("blur.vert","blur.frag",context);
             blurProgram.Link();
 
-            coloring = new ShaderProgram("blur.vert","color.frag");            
+            coloring = new ShaderProgram("blur.vert","color.frag",context);            
             coloring.Link();	
 
-            JFA = new ShaderProgram("blur.vert","jfa.frag");            
+            JFA = new ShaderProgram("blur.vert","jfa.frag",context);
             JFA.Link();
 
             BlurData = new float[Width * Height];

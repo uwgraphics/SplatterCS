@@ -61,7 +61,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddDialog.Designer.cs">
+      <DependentUpon>AddDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddDialogRow.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AddDialogRow.Designer.cs">
+      <DependentUpon>AddDialogRow.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ColorConv.cs" />
     <Compile Include="Data.cs" />
+    <Compile Include="DataFile.cs" />
+    <Compile Include="DataSeries.cs" />
     <Compile Include="DensityRenderer.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -72,6 +87,25 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ShaderProgram.cs" />
+    <Compile Include="SingleSplatterDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SingleSplatterDialog.Designer.cs">
+      <DependentUpon>SingleSplatterDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SliderController.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SliderController.Designer.cs">
+      <DependentUpon>SliderController.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SplamDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SplamDialog.Designer.cs">
+      <DependentUpon>SplamDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SplamModel.cs" />
     <Compile Include="SplatterModel.cs" />
     <Compile Include="SplatterView.cs">
       <SubType>UserControl</SubType>
@@ -79,6 +113,12 @@
     <Compile Include="SplatterView.Designer.cs">
       <DependentUpon>SplatterView.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="AddDialog.resx">
+      <DependentUpon>AddDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddDialogRow.resx">
+      <DependentUpon>AddDialogRow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -91,6 +131,15 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SingleSplatterDialog.resx">
+      <DependentUpon>SingleSplatterDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SliderController.resx">
+      <DependentUpon>SliderController.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SplamDialog.resx">
+      <DependentUpon>SplamDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SplatterView.resx">
       <DependentUpon>SplatterView.cs</DependentUpon>
     </EmbeddedResource>
