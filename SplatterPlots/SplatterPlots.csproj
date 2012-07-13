@@ -113,6 +113,18 @@
     <Compile Include="SplatterView.Designer.cs">
       <DependentUpon>SplatterView.cs</DependentUpon>
     </Compile>
+    <Compile Include="SplatterviewContainer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SplatterviewContainer.Designer.cs">
+      <DependentUpon>SplatterviewContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VerticalLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="VerticalLabel.Designer.cs">
+      <DependentUpon>VerticalLabel.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AddDialog.resx">
       <DependentUpon>AddDialog.cs</DependentUpon>
     </EmbeddedResource>
@@ -142,6 +154,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SplatterView.resx">
       <DependentUpon>SplatterView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SplatterviewContainer.resx">
+      <DependentUpon>SplatterviewContainer.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="blend.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

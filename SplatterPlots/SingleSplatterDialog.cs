@@ -18,8 +18,8 @@ namespace SplatterPlots
         public void SetModel(SplatterModel model)
         {
             var list = new List<SplatterView>();
-            splatterView1.setSplatPM(model);
-            list.Add(splatterView1);
+            splatterView1.View.setSplatPM(model);
+            list.Add(splatterView1.View);
             sliderController1.SetView(list);
         }
     }

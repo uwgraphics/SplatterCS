@@ -56,6 +56,7 @@ namespace SplatterPlots
         #endregion
 
         #region Public Properties
+        public event EventHandler ModelChanged;
         public SplatterModel Model { get { return splatPM; } }
         public float Bandwidth
         {
@@ -167,7 +168,6 @@ namespace SplatterPlots
         }
         public void setSplatPM(SplatterModel spm)
         {
-
             screenOffsetX = Width / 2;
             screenOffsetY = Height / 2;
             splatPM = spm;
@@ -188,6 +188,10 @@ namespace SplatterPlots
                 }
             }
             setBBox(spm.xmin, spm.ymin, spm.xmax, spm.ymax);
+            if (ModelChanged!=null)
+            {
+                ModelChanged(this, EventArgs.Empty);
+            }
         }
         #endregion
 
@@ -208,10 +212,11 @@ namespace SplatterPlots
         }
         private void SplatterView_Load(object sender, EventArgs e)
         {
-            if (DesignMode)
+            if (!Program.Runtime)
             {
                 return;
-            }
+            }            
+
             loaded = true;
             this.MakeCurrent();
             
@@ -248,7 +253,7 @@ namespace SplatterPlots
         }
         private void SplatterView_Resize(object sender, EventArgs e)
         {
-            if (DesignMode)
+            if (!Program.Runtime)
             {
                 return;
             }

@@ -29,36 +29,24 @@
         private void InitializeComponent()
         {
             this.sliderController1 = new SplatterPlots.SliderController();
-            this.splatterView1 = new SplatterPlots.SplatterView();
+            this.splatterView1 = new SplatterPlots.SplatterviewContainer();
             this.SuspendLayout();
             // 
             // sliderController1
             // 
             this.sliderController1.Location = new System.Drawing.Point(718, 12);
-            this.sliderController1.MaximumSize = new System.Drawing.Size(1000, 450);
+            this.sliderController1.MaximumSize = new System.Drawing.Size(1000, 650);
             this.sliderController1.MinimumSize = new System.Drawing.Size(250, 450);
             this.sliderController1.Name = "sliderController1";
-            this.sliderController1.Size = new System.Drawing.Size(500, 450);
+            this.sliderController1.Size = new System.Drawing.Size(500, 485);
             this.sliderController1.TabIndex = 1;
             // 
             // splatterView1
             // 
-            this.splatterView1.BackColor = System.Drawing.Color.Black;
-            this.splatterView1.Bandwidth = 10F;
-            this.splatterView1.ChromaF = 0.95F;
-            this.splatterView1.ClutterWindow = 30F;
-            this.splatterView1.Gain = 1F;
-            this.splatterView1.LightnessF = 0.95F;
             this.splatterView1.Location = new System.Drawing.Point(12, 12);
-            this.splatterView1.LowerLimit = 0F;
             this.splatterView1.Name = "splatterView1";
-            this.splatterView1.ScaleFactorX = 1F;
-            this.splatterView1.ScaleFactorY = 1F;
             this.splatterView1.Size = new System.Drawing.Size(700, 700);
-            this.splatterView1.StripePeriod = 50F;
-            this.splatterView1.StripeWidth = 1F;
-            this.splatterView1.TabIndex = 2;
-            this.splatterView1.VSync = false;
+            this.splatterView1.TabIndex = 3;
             // 
             // SingleSplatterDialog
             // 
@@ -67,6 +55,7 @@
             this.ClientSize = new System.Drawing.Size(1212, 724);
             this.Controls.Add(this.splatterView1);
             this.Controls.Add(this.sliderController1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "SingleSplatterDialog";
             this.Text = "SingleSplatterDialog";
             this.ResumeLayout(false);
@@ -76,6 +65,6 @@
         #endregion
 
         private SliderController sliderController1;
-        private SplatterView splatterView1;
+        private SplatterviewContainer splatterView1;
     }
 }

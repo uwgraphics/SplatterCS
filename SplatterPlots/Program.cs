@@ -13,9 +13,11 @@ namespace SplatterPlots
         [STAThread]
         static void Main()
         {
+            Runtime = true;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
         }
+        public static bool Runtime = false;
     }
 }

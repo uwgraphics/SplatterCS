@@ -105,6 +105,14 @@ namespace SplatterPlots
                 var res = dialog.ShowDialog(this);
                 if (res == System.Windows.Forms.DialogResult.OK)
                 {
+                    if (SingleSplatterDialog != null)
+                    {
+                        SingleSplatterDialog.Close();
+                    }
+                    if (SplamDialog != null)
+                    {
+                        SplamDialog.Close();
+                    }
                     var schema = dialog.GetSchema();
                     var list = dataFile.ConvertToDataSeries(schema);
                     AddDataSeriesToList(list);
@@ -130,10 +138,14 @@ namespace SplatterPlots
         private void buttonSplat_Click(object sender, EventArgs e)
         {
             if (m_Series.Count > 0)
-            {
+            {                
                 var model = new SplatterModel(m_Series.Values.ToList(), 0, 1);
                 SingleSplatterDialog.SetModel(model);
-                SingleSplatterDialog.Show(this);
+                if (!SingleSplatterDialog.Visible)
+                {
+                    SingleSplatterDialog.Show(this);
+                }
+                SingleSplatterDialog.BringToFront();                
             }
         }
 
@@ -144,6 +156,10 @@ namespace SplatterPlots
                 if (SingleSplatterDialog!=null)
                 {
                     SingleSplatterDialog.Close();
+                }
+                if (SplamDialog != null)
+                {
+                    SplamDialog.Close();
                 }
                 var list = new List<ListViewItem>(listViewDataSeries.SelectedItems.Cast<ListViewItem>());
                 foreach (var item in list)
@@ -161,7 +177,11 @@ namespace SplatterPlots
             {
                 var model = new SplamModel(m_Series.Values.ToList());
                 SplamDialog.SetModel(model);
-                SplamDialog.Show(this);
+                if (!SplamDialog.Visible)
+                {
+                    SplamDialog.Show(this);
+                }
+                SplamDialog.BringToFront();
             }
         }
 

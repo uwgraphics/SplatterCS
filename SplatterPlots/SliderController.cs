@@ -32,6 +32,7 @@ namespace SplatterPlots
             trackBarXScaling.Value = (int)(10 * Math.Log(m_views.First().ScaleFactorX, 1.0 / 9.0));
             trackBarYScaling.Value = (int)(10 * Math.Log(m_views.First().ScaleFactorY, 1.0 / 9.0));
             allowUpdate = true;
+            buttonSplatter_Click(this, EventArgs.Empty);
         }
 
         private void trackBarBandwith_ValueChanged(object sender, EventArgs e)
@@ -141,6 +142,23 @@ namespace SplatterPlots
                 return;
             }
             m_views.ForEach(view => view.ScaleFactorY = (float)Math.Pow(1.0 / 9.0, val));
+        }
+
+        private void buttonSplatter_Click(object sender, EventArgs e)
+        {
+            trackBarContourThresh.Value = 70;
+            trackBarClutterRad.Value = 10;
+            trackBarDensityThresh.Value = 100;
+            trackBarBandwith.Value = 12;
+            trackBarLightnessF.Value = 90;
+        }
+
+        private void buttonKDE_Click(object sender, EventArgs e)
+        {
+            trackBarContourThresh.Value = 100;
+            trackBarClutterRad.Value = 10;
+            trackBarDensityThresh.Value = 1;
+            trackBarBandwith.Value = 12;
         }
     }
 }

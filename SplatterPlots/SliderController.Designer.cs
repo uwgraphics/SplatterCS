@@ -59,6 +59,10 @@
             this.trackBarStripePeriod = new System.Windows.Forms.TrackBar();
             this.trackBarXScaling = new System.Windows.Forms.TrackBar();
             this.label10 = new System.Windows.Forms.Label();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
+            this.buttonSplatter = new System.Windows.Forms.Button();
+            this.buttonKDE = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarYScaling)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarBandwith)).BeginInit();
@@ -70,10 +74,14 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStripeWidth)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStripePeriod)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarXScaling)).BeginInit();
+            this.flowLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
+            this.tableLayoutPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -108,7 +116,6 @@
             this.tableLayoutPanel1.Controls.Add(this.trackBarStripePeriod, 1, 7);
             this.tableLayoutPanel1.Controls.Add(this.trackBarXScaling, 1, 8);
             this.tableLayoutPanel1.Controls.Add(this.label10, 0, 9);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
@@ -123,13 +130,13 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 45F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 45F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 45F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(500, 450);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(450, 450);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // labelYScaling
             // 
             this.labelYScaling.AutoSize = true;
-            this.labelYScaling.Location = new System.Drawing.Point(433, 405);
+            this.labelYScaling.Location = new System.Drawing.Point(383, 405);
             this.labelYScaling.Name = "labelYScaling";
             this.labelYScaling.Size = new System.Drawing.Size(41, 13);
             this.labelYScaling.TabIndex = 29;
@@ -142,7 +149,7 @@
             this.trackBarYScaling.Maximum = 100;
             this.trackBarYScaling.Minimum = -100;
             this.trackBarYScaling.Name = "trackBarYScaling";
-            this.trackBarYScaling.Size = new System.Drawing.Size(324, 39);
+            this.trackBarYScaling.Size = new System.Drawing.Size(274, 39);
             this.trackBarYScaling.TabIndex = 30;
             this.trackBarYScaling.TickFrequency = 10;
             this.trackBarYScaling.ValueChanged += new System.EventHandler(this.trackBarYScaling_ValueChanged);
@@ -150,7 +157,7 @@
             // labelXScaling
             // 
             this.labelXScaling.AutoSize = true;
-            this.labelXScaling.Location = new System.Drawing.Point(433, 360);
+            this.labelXScaling.Location = new System.Drawing.Point(383, 360);
             this.labelXScaling.Name = "labelXScaling";
             this.labelXScaling.Size = new System.Drawing.Size(41, 13);
             this.labelXScaling.TabIndex = 27;
@@ -159,7 +166,7 @@
             // labelStripePeriod
             // 
             this.labelStripePeriod.AutoSize = true;
-            this.labelStripePeriod.Location = new System.Drawing.Point(433, 315);
+            this.labelStripePeriod.Location = new System.Drawing.Point(383, 315);
             this.labelStripePeriod.Name = "labelStripePeriod";
             this.labelStripePeriod.Size = new System.Drawing.Size(41, 13);
             this.labelStripePeriod.TabIndex = 26;
@@ -168,7 +175,7 @@
             // labelStripeWidth
             // 
             this.labelStripeWidth.AutoSize = true;
-            this.labelStripeWidth.Location = new System.Drawing.Point(433, 270);
+            this.labelStripeWidth.Location = new System.Drawing.Point(383, 270);
             this.labelStripeWidth.Name = "labelStripeWidth";
             this.labelStripeWidth.Size = new System.Drawing.Size(41, 13);
             this.labelStripeWidth.TabIndex = 25;
@@ -177,7 +184,7 @@
             // labelClutterRad
             // 
             this.labelClutterRad.AutoSize = true;
-            this.labelClutterRad.Location = new System.Drawing.Point(433, 225);
+            this.labelClutterRad.Location = new System.Drawing.Point(383, 225);
             this.labelClutterRad.Name = "labelClutterRad";
             this.labelClutterRad.Size = new System.Drawing.Size(41, 13);
             this.labelClutterRad.TabIndex = 24;
@@ -186,7 +193,7 @@
             // labelLightnessF
             // 
             this.labelLightnessF.AutoSize = true;
-            this.labelLightnessF.Location = new System.Drawing.Point(433, 180);
+            this.labelLightnessF.Location = new System.Drawing.Point(383, 180);
             this.labelLightnessF.Name = "labelLightnessF";
             this.labelLightnessF.Size = new System.Drawing.Size(41, 13);
             this.labelLightnessF.TabIndex = 23;
@@ -195,7 +202,7 @@
             // labelChromaF
             // 
             this.labelChromaF.AutoSize = true;
-            this.labelChromaF.Location = new System.Drawing.Point(433, 135);
+            this.labelChromaF.Location = new System.Drawing.Point(383, 135);
             this.labelChromaF.Name = "labelChromaF";
             this.labelChromaF.Size = new System.Drawing.Size(41, 13);
             this.labelChromaF.TabIndex = 22;
@@ -204,7 +211,7 @@
             // labelDensityThresh
             // 
             this.labelDensityThresh.AutoSize = true;
-            this.labelDensityThresh.Location = new System.Drawing.Point(433, 90);
+            this.labelDensityThresh.Location = new System.Drawing.Point(383, 90);
             this.labelDensityThresh.Name = "labelDensityThresh";
             this.labelDensityThresh.Size = new System.Drawing.Size(41, 13);
             this.labelDensityThresh.TabIndex = 21;
@@ -213,7 +220,7 @@
             // labelContourThresh
             // 
             this.labelContourThresh.AutoSize = true;
-            this.labelContourThresh.Location = new System.Drawing.Point(433, 45);
+            this.labelContourThresh.Location = new System.Drawing.Point(383, 45);
             this.labelContourThresh.Name = "labelContourThresh";
             this.labelContourThresh.Size = new System.Drawing.Size(41, 13);
             this.labelContourThresh.TabIndex = 20;
@@ -222,7 +229,7 @@
             // labelBandwidth
             // 
             this.labelBandwidth.AutoSize = true;
-            this.labelBandwidth.Location = new System.Drawing.Point(433, 0);
+            this.labelBandwidth.Location = new System.Drawing.Point(383, 0);
             this.labelBandwidth.Name = "labelBandwidth";
             this.labelBandwidth.Size = new System.Drawing.Size(41, 13);
             this.labelBandwidth.TabIndex = 19;
@@ -317,7 +324,7 @@
             this.trackBarBandwith.Maximum = 150;
             this.trackBarBandwith.Minimum = 1;
             this.trackBarBandwith.Name = "trackBarBandwith";
-            this.trackBarBandwith.Size = new System.Drawing.Size(330, 45);
+            this.trackBarBandwith.Size = new System.Drawing.Size(280, 45);
             this.trackBarBandwith.TabIndex = 9;
             this.trackBarBandwith.TickFrequency = 10;
             this.trackBarBandwith.Value = 1;
@@ -331,7 +338,7 @@
             this.trackBarContourThresh.Maximum = 100;
             this.trackBarContourThresh.Minimum = 1;
             this.trackBarContourThresh.Name = "trackBarContourThresh";
-            this.trackBarContourThresh.Size = new System.Drawing.Size(330, 45);
+            this.trackBarContourThresh.Size = new System.Drawing.Size(280, 45);
             this.trackBarContourThresh.TabIndex = 10;
             this.trackBarContourThresh.TickFrequency = 5;
             this.trackBarContourThresh.Value = 1;
@@ -344,7 +351,7 @@
             this.trackBarDensityThresh.Margin = new System.Windows.Forms.Padding(0);
             this.trackBarDensityThresh.Maximum = 100;
             this.trackBarDensityThresh.Name = "trackBarDensityThresh";
-            this.trackBarDensityThresh.Size = new System.Drawing.Size(330, 45);
+            this.trackBarDensityThresh.Size = new System.Drawing.Size(280, 45);
             this.trackBarDensityThresh.TabIndex = 11;
             this.trackBarDensityThresh.TickFrequency = 5;
             this.trackBarDensityThresh.ValueChanged += new System.EventHandler(this.trackBarDensityThresh_ValueChanged);
@@ -357,7 +364,7 @@
             this.trackBarChromaF.Maximum = 100;
             this.trackBarChromaF.Minimum = 1;
             this.trackBarChromaF.Name = "trackBarChromaF";
-            this.trackBarChromaF.Size = new System.Drawing.Size(330, 45);
+            this.trackBarChromaF.Size = new System.Drawing.Size(280, 45);
             this.trackBarChromaF.TabIndex = 12;
             this.trackBarChromaF.TickFrequency = 5;
             this.trackBarChromaF.Value = 1;
@@ -371,7 +378,7 @@
             this.trackBarLightnessF.Maximum = 100;
             this.trackBarLightnessF.Minimum = 1;
             this.trackBarLightnessF.Name = "trackBarLightnessF";
-            this.trackBarLightnessF.Size = new System.Drawing.Size(330, 45);
+            this.trackBarLightnessF.Size = new System.Drawing.Size(280, 45);
             this.trackBarLightnessF.TabIndex = 13;
             this.trackBarLightnessF.TickFrequency = 5;
             this.trackBarLightnessF.Value = 1;
@@ -385,7 +392,7 @@
             this.trackBarClutterRad.Maximum = 150;
             this.trackBarClutterRad.Minimum = 1;
             this.trackBarClutterRad.Name = "trackBarClutterRad";
-            this.trackBarClutterRad.Size = new System.Drawing.Size(330, 45);
+            this.trackBarClutterRad.Size = new System.Drawing.Size(280, 45);
             this.trackBarClutterRad.TabIndex = 14;
             this.trackBarClutterRad.TickFrequency = 10;
             this.trackBarClutterRad.Value = 1;
@@ -398,7 +405,7 @@
             this.trackBarStripeWidth.Margin = new System.Windows.Forms.Padding(0);
             this.trackBarStripeWidth.Maximum = 100;
             this.trackBarStripeWidth.Name = "trackBarStripeWidth";
-            this.trackBarStripeWidth.Size = new System.Drawing.Size(330, 45);
+            this.trackBarStripeWidth.Size = new System.Drawing.Size(280, 45);
             this.trackBarStripeWidth.TabIndex = 16;
             this.trackBarStripeWidth.TickFrequency = 5;
             this.trackBarStripeWidth.ValueChanged += new System.EventHandler(this.trackBarStripeWidth_ValueChanged);
@@ -411,7 +418,7 @@
             this.trackBarStripePeriod.Maximum = 50;
             this.trackBarStripePeriod.Minimum = 1;
             this.trackBarStripePeriod.Name = "trackBarStripePeriod";
-            this.trackBarStripePeriod.Size = new System.Drawing.Size(330, 45);
+            this.trackBarStripePeriod.Size = new System.Drawing.Size(280, 45);
             this.trackBarStripePeriod.TabIndex = 17;
             this.trackBarStripePeriod.TickFrequency = 5;
             this.trackBarStripePeriod.Value = 1;
@@ -425,7 +432,7 @@
             this.trackBarXScaling.Maximum = 100;
             this.trackBarXScaling.Minimum = -100;
             this.trackBarXScaling.Name = "trackBarXScaling";
-            this.trackBarXScaling.Size = new System.Drawing.Size(330, 45);
+            this.trackBarXScaling.Size = new System.Drawing.Size(280, 45);
             this.trackBarXScaling.TabIndex = 15;
             this.trackBarXScaling.TickFrequency = 10;
             this.trackBarXScaling.ValueChanged += new System.EventHandler(this.trackBarXScaling_ValueChanged);
@@ -439,15 +446,53 @@
             this.label10.TabIndex = 18;
             this.label10.Text = "Y Axis Scaling";
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Controls.Add(this.tableLayoutPanel1);
+            this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(450, 486);
+            this.flowLayoutPanel1.TabIndex = 2;
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.Controls.Add(this.buttonSplatter);
+            this.flowLayoutPanel2.Controls.Add(this.buttonKDE);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 453);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(447, 31);
+            this.flowLayoutPanel2.TabIndex = 3;
+            // 
+            // buttonSplatter
+            // 
+            this.buttonSplatter.Location = new System.Drawing.Point(3, 3);
+            this.buttonSplatter.Name = "buttonSplatter";
+            this.buttonSplatter.Size = new System.Drawing.Size(75, 23);
+            this.buttonSplatter.TabIndex = 0;
+            this.buttonSplatter.Text = "Splatterplot";
+            this.buttonSplatter.UseVisualStyleBackColor = true;
+            this.buttonSplatter.Click += new System.EventHandler(this.buttonSplatter_Click);
+            // 
+            // buttonKDE
+            // 
+            this.buttonKDE.Location = new System.Drawing.Point(84, 3);
+            this.buttonKDE.Name = "buttonKDE";
+            this.buttonKDE.Size = new System.Drawing.Size(75, 23);
+            this.buttonKDE.TabIndex = 1;
+            this.buttonKDE.Text = "KDE";
+            this.buttonKDE.UseVisualStyleBackColor = true;
+            this.buttonKDE.Click += new System.EventHandler(this.buttonKDE_Click);
+            // 
             // SliderController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.MaximumSize = new System.Drawing.Size(1000, 450);
+            this.Controls.Add(this.flowLayoutPanel1);
+            this.MaximumSize = new System.Drawing.Size(1000, 650);
             this.MinimumSize = new System.Drawing.Size(250, 450);
             this.Name = "SliderController";
-            this.Size = new System.Drawing.Size(500, 450);
+            this.Size = new System.Drawing.Size(449, 487);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarYScaling)).EndInit();
@@ -460,6 +505,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStripeWidth)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarStripePeriod)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarXScaling)).EndInit();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -497,5 +544,9 @@
         private System.Windows.Forms.TrackBar trackBarStripePeriod;
         private System.Windows.Forms.TrackBar trackBarXScaling;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
+        private System.Windows.Forms.Button buttonSplatter;
+        private System.Windows.Forms.Button buttonKDE;
     }
 }

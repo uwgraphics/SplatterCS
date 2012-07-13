@@ -29,16 +29,16 @@ namespace SplatterPlots
             float sz = (float)(panel1.Width) / (m_Model.numDim - 1.0f);
             int szi = (int)sz;
             for (int i = 0; i < m_Model.SplatList.Count; i++)
-            {                
-                var view = new SplatterView();
+            {
+                var view = new SplatterviewContainer();
                 int I = m_Model.Iindex[i];
                 int J = m_Model.Jindex[i] - 1;
                 view.Name = "splom" + I + J;
                 view.Size = new System.Drawing.Size(szi - 25, szi - 25);
                 view.Location = new Point(I * szi + 25, J * szi);
-                m_Views.Add(view);
-                view.DoubleClick += new EventHandler(view_DoubleClick);
-                view.setSplatPM(m_Model.SplatList[i]);
+                m_Views.Add(view.View);
+                view.View.DoubleClick += new EventHandler(view_DoubleClick);
+                view.View.setSplatPM(m_Model.SplatList[i]);
                 panel1.Controls.Add(view);
 
                 //QLabel *label = new QLabel(ui.splomArea);

@@ -42,10 +42,10 @@
             // sliderController1
             // 
             this.sliderController1.Location = new System.Drawing.Point(1018, 12);
-            this.sliderController1.MaximumSize = new System.Drawing.Size(1000, 450);
+            this.sliderController1.MaximumSize = new System.Drawing.Size(1000, 650);
             this.sliderController1.MinimumSize = new System.Drawing.Size(250, 450);
             this.sliderController1.Name = "sliderController1";
-            this.sliderController1.Size = new System.Drawing.Size(475, 450);
+            this.sliderController1.Size = new System.Drawing.Size(475, 490);
             this.sliderController1.TabIndex = 1;
             // 
             // SplamDialog
@@ -55,6 +55,7 @@
             this.ClientSize = new System.Drawing.Size(1505, 1022);
             this.Controls.Add(this.sliderController1);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "SplamDialog";
             this.Text = "SplamDialog";
             this.ResumeLayout(false);
