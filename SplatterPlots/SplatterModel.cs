@@ -26,7 +26,7 @@ namespace SplatterPlots
 
         public bool enabled { get; set; }
 
-        public List<Vector2> dataPoints { get; private set; }
+        public List<ProjectedPoint> dataPoints { get; private set; }
         public List<float> dataZval { get; private set; }
 
         public Color color { get { return m_Data.Color; } }

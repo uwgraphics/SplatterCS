@@ -459,7 +459,7 @@ namespace SplatterPlots
             GL.Begin(BeginMode.Points);
             foreach (var point in series.dataPoints)
             {
-                GL.Vertex2(point);
+                GL.Vertex2(point.X,point.Y);
             }
 
             GL.End();
