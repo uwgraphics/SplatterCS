@@ -196,6 +196,15 @@ namespace SplatterPlots
             }
             return resultRGB;
         }
+        public static Color Modulate(Color original, float factor)
+        {
+            Vector3 rgb = new Vector3(original.R / 255.0f, original.G / 255.0f, original.B / 255.0f);
+            var lch = LABtoLCH(RGBtoLAB(rgb));
+            lch *= factor;
+            rgb = LABtoRGB(LCHtoLAB(lch), true);
+            var color = Color.FromArgb((int)(rgb.X * 255), (int)(rgb.Y * 255), (int)(rgb.Z * 255));
+            return color;
+        }
         #endregion
 
         #region private

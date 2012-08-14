@@ -12,16 +12,26 @@ namespace SplatterPlots
     public partial class SplatterviewContainer : UserControl
     {
         SplatterView m_View;
+        public event EventHandler PointSelection;
         public SplatterviewContainer()
         {
             InitializeComponent();
             m_View = new SplatterView();
             m_View.Dock = DockStyle.Fill;
             m_View.ModelChanged += new EventHandler(m_View_ModelChanged);
+            m_View.PointSelection += new EventHandler(m_View_PointSelection);
             if (Program.Runtime)
             {
                 tableLayoutPanel1.Controls.Add(m_View, 1, 0);
             }            
+        }
+
+        void m_View_PointSelection(object sender, EventArgs e)
+        {
+            if (PointSelection!=null)
+            {
+                PointSelection(this, EventArgs.Empty);
+            }
         }
 
         void m_View_ModelChanged(object sender, EventArgs e)

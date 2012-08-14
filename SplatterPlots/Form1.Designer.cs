@@ -42,6 +42,7 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.buttonSplat = new System.Windows.Forms.Button();
             this.buttonSplam = new System.Windows.Forms.Button();
+            this.button1vsAll = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -135,6 +136,7 @@
             // panel1
             // 
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panel1.Controls.Add(this.button1vsAll);
             this.panel1.Controls.Add(this.buttonAdd);
             this.panel1.Controls.Add(this.buttonRemove);
             this.panel1.Location = new System.Drawing.Point(202, 102);
@@ -186,6 +188,16 @@
             this.buttonSplam.UseVisualStyleBackColor = true;
             this.buttonSplam.Click += new System.EventHandler(this.buttonSplam_Click);
             // 
+            // button1vsAll
+            // 
+            this.button1vsAll.Location = new System.Drawing.Point(3, 32);
+            this.button1vsAll.Name = "button1vsAll";
+            this.button1vsAll.Size = new System.Drawing.Size(88, 23);
+            this.button1vsAll.TabIndex = 7;
+            this.button1vsAll.Text = "Add to 1vsAll";
+            this.button1vsAll.UseVisualStyleBackColor = true;
+            this.button1vsAll.Click += new System.EventHandler(this.button1vsAll_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -225,6 +237,7 @@
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.Button buttonSplat;
         private System.Windows.Forms.Button buttonSplam;
+        private System.Windows.Forms.Button button1vsAll;
 
     }
 }

@@ -68,6 +68,12 @@
     <Compile Include="AddDialogRow.Designer.cs">
       <DependentUpon>AddDialogRow.cs</DependentUpon>
     </Compile>
+    <Compile Include="AddTo1vsAllDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="AddTo1vsAllDialog.Designer.cs">
+      <DependentUpon>AddTo1vsAllDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="ColorConv.cs" />
     <Compile Include="Data.cs" />
     <Compile Include="DataFile.cs" />
@@ -79,8 +85,20 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="OneVersusAllDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="OneVersusAllDialog.Designer.cs">
+      <DependentUpon>OneVersusAllDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectionTable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SelectionTable.Designer.cs">
+      <DependentUpon>SelectionTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShaderProgram.cs" />
     <Compile Include="SingleSplatterDialog.cs">
       <SubType>Form</SubType>
@@ -126,6 +144,9 @@
     <EmbeddedResource Include="AddDialogRow.resx">
       <DependentUpon>AddDialogRow.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AddTo1vsAllDialog.resx">
+      <DependentUpon>AddTo1vsAllDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -138,6 +159,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="SelectionTable.resx">
+      <DependentUpon>SelectionTable.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SingleSplatterDialog.resx">
       <DependentUpon>SingleSplatterDialog.cs</DependentUpon>
     </EmbeddedResource>

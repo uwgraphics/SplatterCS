@@ -16,6 +16,8 @@ namespace SplatterPlots
         private Dictionary<ListViewItem, DataSeries> m_Series = new Dictionary<ListViewItem, DataSeries>();
         private SingleSplatterDialog m_SingleSplatterDialog = null;
         private SplamDialog m_SplamDialog = null;
+        private SelectionTable m_SelectionDialog = null;
+        private OneVersusAllDialog m_OneVersusAllDialog = null;
 
         SingleSplatterDialog SingleSplatterDialog
         {
@@ -24,10 +26,22 @@ namespace SplatterPlots
                 if (m_SingleSplatterDialog == null||m_SingleSplatterDialog.IsDisposed)
                 {
                     m_SingleSplatterDialog = new SingleSplatterDialog();
+                    m_SingleSplatterDialog.PointSelection += new EventHandler(SplatterDialogs_PointSelection);
                 }
                 return m_SingleSplatterDialog;
             }
         }
+        SelectionTable SelectionTableDialog
+        {
+            get
+            {
+                if (m_SelectionDialog==null||m_SelectionDialog.IsDisposed)
+                {
+                    m_SelectionDialog = new SelectionTable();                    
+                }
+                return m_SelectionDialog;
+            }
+        }        
         SplamDialog SplamDialog
         {
             get
@@ -36,11 +50,57 @@ namespace SplatterPlots
                 {
                     m_SplamDialog = new SplamDialog();
                     m_SplamDialog.SplatterSelection += new EventHandler(m_SplamDialog_SplatterSelection);
+                    m_SplamDialog.PointSelection+= new EventHandler(SplatterDialogs_PointSelection);
                 }
                 return m_SplamDialog;
             }
         }
-
+        OneVersusAllDialog OneVersusAllDialog
+        {
+            get
+            {
+                if (m_OneVersusAllDialog == null || m_OneVersusAllDialog.IsDisposed)
+                {
+                    m_OneVersusAllDialog = new OneVersusAllDialog();
+                    m_OneVersusAllDialog.SplatterSelection += new EventHandler(m_SplamDialog_SplatterSelection);
+                    m_OneVersusAllDialog.PointSelection += new EventHandler(SplatterDialogs_PointSelection);
+                }
+                return m_OneVersusAllDialog;
+            }
+        }
+        void SplatterDialogs_PointSelection(object sender, EventArgs e)
+        {
+            if (m_SingleSplatterDialog != null)
+            {
+                m_SingleSplatterDialog.Refresh();
+            }
+            if (m_SplamDialog != null)
+            {
+                m_SplamDialog.Refresh();
+            }
+            DataTable view = null;
+            foreach (var series in m_Series.Values)
+            {
+                if (view == null)
+                {
+                    var list = series.GetSelectedRows();
+                    if (list.Count() > 0)
+                    {
+                        view = list.CopyToDataTable();
+                    }
+                }
+                else
+                {
+                    series.GetSelectedRows().CopyToDataTable(view, LoadOption.PreserveChanges);
+                }
+            }
+            SelectionTableDialog.SetDataView(view);
+            if (!SelectionTableDialog.Visible)
+            {
+                SelectionTableDialog.Show();
+            }
+            SelectionTableDialog.BringToFront();
+        }
         public Form1()
         {
             InitializeComponent();            
@@ -193,6 +253,22 @@ namespace SplatterPlots
                 SingleSplatterDialog.SetModel(view.Model);
                 SingleSplatterDialog.Show();
                 SingleSplatterDialog.BringToFront();
+            }
+        }
+
+        private void button1vsAll_Click(object sender, EventArgs e)
+        {
+            var dialog = new AddTo1vsAllDialog();
+            if (listViewDataFiles.SelectedItems.Count > 0)
+            {
+                var item = listViewDataFiles.SelectedItems[0];
+                var dataFile = m_Files[item];
+                dialog.SetDataFile(dataFile);
+                var res = dialog.ShowDialog(this);
+                if (res == System.Windows.Forms.DialogResult.OK)
+                {
+                    
+                }
             }
         }
     }

@@ -15,6 +15,7 @@ namespace SplatterPlots
         List<SplatterView> m_Views = new List<SplatterView>();
 
         public event EventHandler SplatterSelection;
+        public event EventHandler PointSelection;
 
         public SplamDialog()
         {
@@ -36,6 +37,7 @@ namespace SplatterPlots
                 view.Name = "splom" + I + J;
                 view.Size = new System.Drawing.Size(szi - 25, szi - 25);
                 view.Location = new Point(I * szi + 25, J * szi);
+                view.PointSelection += new EventHandler(view_PointSelection);
                 m_Views.Add(view.View);
                 view.View.DoubleClick += new EventHandler(view_DoubleClick);
                 view.View.setSplatPM(m_Model.SplatList[i]);
@@ -54,6 +56,14 @@ namespace SplatterPlots
             }
 
             sliderController1.SetView(m_Views);
+        }
+
+        void view_PointSelection(object sender, EventArgs e)
+        {
+            if (PointSelection != null)
+            {
+                PointSelection(this, EventArgs.Empty);
+            }
         }
 
         void view_DoubleClick(object sender, EventArgs e)

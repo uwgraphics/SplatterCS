@@ -31,7 +31,7 @@ namespace SplatterPlots
 
             string info;
             GL.GetShaderInfoLog(p, out info);
-
+            System.Diagnostics.Debug.Assert(string.IsNullOrEmpty(info));
             return p;
         }
 

@@ -19,16 +19,12 @@ namespace SplatterPlots
             dim0 = d0;
             dim1 = d1;
             //data.setIndeces(dim0, dim1);
-            dataPoints = data.getXYValues(dim0,dim1);
-            Random rand = new Random();
-            dataZval = dataPoints.Select(vec=> (float)rand.NextDouble()).ToList();
+            dataPoints = data.getXYValues(dim0,dim1);            
         }
 
         public bool enabled { get; set; }
 
         public List<ProjectedPoint> dataPoints { get; private set; }
-        public List<float> dataZval { get; private set; }
-
         public Color color { get { return m_Data.Color; } }
         public string name { get; private set; }
 
@@ -66,7 +62,13 @@ namespace SplatterPlots
                 ymin = Math.Min(ymin, sp.ymin);
             }
         }
-
+        public void Select(float xmin, float ymin, float xmax, float ymax)
+        {
+            foreach (var series in seriesList.Values)
+            {
+                series.dataPoints.ForEach(p => p.Selected = IsSelected(p, xmin, ymin, xmax, ymax));
+            }
+        }
         public void SetEnabled(string group, bool value)
         {
             seriesList[group].enabled = value;
@@ -81,5 +83,11 @@ namespace SplatterPlots
 
         public string dim0Name;
         public string dim1Name;
+
+        private bool IsSelected(ProjectedPoint p, float xmin, float ymin, float xmax, float ymax)
+        {
+            return  p.X >= xmin && p.X <= xmax &&
+                    p.Y >= ymin && p.Y <= ymax;
+        }
     }
 }

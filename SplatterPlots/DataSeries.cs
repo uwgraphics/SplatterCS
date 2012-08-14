@@ -10,17 +10,20 @@ namespace SplatterPlots
 {
     public class ProjectedPoint
     {
-        private DataRow m_Row;
-
-        public ProjectedPoint(DataRow row,float x,float y)
+        private DataSeriesRow m_Row;
+        private static Random Rand = new Random();
+        public ProjectedPoint(DataSeriesRow row, float x, float y)
         {
             X = x;
             Y = y;
             m_Row = row;
+            Z = (float)ProjectedPoint.Rand.NextDouble();
         }
 
         public float X { get; private set; }
         public float Y { get; private set; }
+        public float Z { get; private set; }
+        public bool Selected { get { return m_Row.Selected; } set { m_Row.Selected = value; } }
     }
     public class ColumnData
     {
@@ -46,6 +49,7 @@ namespace SplatterPlots
             {
                 m_Values[col] = Convert.ToSingle(row.Field<string>(col));
             }
+            Selected = false;
         }
         public DataRow DataRow { get { return m_Row; } }
         public float this[string s]
@@ -55,6 +59,7 @@ namespace SplatterPlots
                 return m_Values[s];
             }
         }
+        public bool Selected { get; set; }
     }
     public class DataSeries
     {
@@ -87,6 +92,11 @@ namespace SplatterPlots
         {
             m_Rows.Add(row);
         }
+        public void AddRowRange(IEnumerable<DataRow> rows, DataFileSchema schema)
+        {
+            var list = rows.Select(r => new DataSeriesRow(schema, r));
+            m_Rows.AddRange(list);
+        }
         public void EndInit()
         {
             foreach (var col in m_Schema.ColumnNames.Where(c => m_Schema.ColumnNumericMap[c]))
@@ -98,13 +108,14 @@ namespace SplatterPlots
                 ColumnNames.Add(col);
             }
         }
+        public IEnumerable<DataRow> GetSelectedRows()
+        {
+            return m_Rows.Where(row => row.Selected).Select(row=>row.DataRow);
+        }
         public List<ProjectedPoint> getXYValues(string ColumnXName, string ColumnYName)
         {
-            ColumnData cDX = ColumnData[ColumnXName];
-            ColumnData cDY = ColumnData[ColumnYName];
-
             var query = from row in m_Rows
-                        select new ProjectedPoint(row.DataRow,(row[ColumnXName]), (row[ColumnYName]));
+                        select new ProjectedPoint(row,(row[ColumnXName]), (row[ColumnYName]));
             return new List<ProjectedPoint>(query);
         }
         

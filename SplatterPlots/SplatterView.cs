@@ -14,6 +14,11 @@ namespace SplatterPlots
 {
     public partial class SplatterView: GLControl
     {
+        private static OpenTK.Graphics.GraphicsMode GetMode(){
+            var def = OpenTK.Graphics.GraphicsMode.Default;
+            var val = new OpenTK.Graphics.GraphicsMode(def.ColorFormat,def.Depth,def.Stencil,0);
+            return val;
+        }
         #region Private Fields
         SplatterModel splatPM;
 
@@ -30,6 +35,12 @@ namespace SplatterPlots
         bool panEnabled;
         int panOrigX;
         int panOrigY;
+
+        bool selectEnabled;
+        int selectOrigX;
+        int selectOrigY;
+        int selectNowX;
+        int selectNowY;
 
         float m_gain;
         float m_lowerLimit;
@@ -57,6 +68,7 @@ namespace SplatterPlots
 
         #region Public Properties
         public event EventHandler ModelChanged;
+        public event EventHandler PointSelection;
         public SplatterModel Model { get { return splatPM; } }
         public float Bandwidth
         {
@@ -112,6 +124,7 @@ namespace SplatterPlots
 
         #region Construction
         public SplatterView()
+            : base(GetMode())
         {
             m_scaleFactorX = 1;
             m_scaleFactorY = 1;
@@ -132,6 +145,7 @@ namespace SplatterPlots
             scaleY = 1;
 
             panEnabled = false;
+            selectEnabled = false;
             fade = true;
             this.MouseWheel += new MouseEventHandler(SplatterView_MouseWheel);
         }
@@ -220,7 +234,9 @@ namespace SplatterPlots
             loaded = true;
             this.MakeCurrent();
             
-            GL.Enable(EnableCap.Multisample);
+            GL.Enable(EnableCap.Multisample);            
+            int val;
+            GL.GetInteger(GetPName.Samples,out val);
             GL.Disable(EnableCap.CullFace);
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
@@ -267,9 +283,18 @@ namespace SplatterPlots
         }
         private void SplatterView_MouseDown(object sender, MouseEventArgs e)
         {
-            panEnabled = true;
-            panOrigX = e.X;
-            panOrigY = (Height - e.Y);
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                panEnabled = true;
+                panOrigX = e.X;
+                panOrigY = (Height - e.Y);
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                selectEnabled = true;
+                selectOrigX = e.X;
+                selectOrigY = Height - e.Y;
+            }
         }
         private void SplatterView_MouseMove(object sender, MouseEventArgs e)
         {
@@ -281,11 +306,32 @@ namespace SplatterPlots
                 screenOffsetY += (Height - e.Y) - panOrigY;
                 panOrigY = (Height - e.Y);
             }
+            if (selectEnabled)
+            {
+                selectNowX = e.X;
+                selectNowY = Height - e.Y;
+            }
             Refresh();
         }
         private void SplatterView_MouseUp(object sender, MouseEventArgs e)
         {
-            panEnabled = false;
+            if (e.Button == System.Windows.Forms.MouseButtons.Left && panEnabled)
+            {
+                panEnabled = false;
+            }
+            if (e.Button == System.Windows.Forms.MouseButtons.Right && selectEnabled)
+            {
+                selectEnabled = false;
+                float xmin = unTransformX(Math.Min(selectNowX, selectOrigX));
+                float ymin = unTransformY(Math.Min(selectNowY, selectOrigY));
+                float xmax = unTransformX(Math.Max(selectNowX, selectOrigX));
+                float ymax = unTransformY(Math.Max(selectNowY, selectOrigY));
+                Model.Select(xmin, ymin, xmax, ymax);
+                if (PointSelection!=null)
+                {
+                    PointSelection(this, EventArgs.Empty);
+                }
+            }
         }
         private void SplatterView_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -399,7 +445,7 @@ namespace SplatterPlots
                 blendProgram.Release();
             }
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, 0);            
+            GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.Disable(EnableCap.Texture2D);
             GL.Disable(EnableCap.Blend);
             setZoomPan();
@@ -417,9 +463,23 @@ namespace SplatterPlots
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.LoadMatrix(ref Matrix4.Identity);
-            drawGrid();
+            drawSelect();
+            drawGrid();            
             this.SwapBuffers();
-        }    
+        }
+        void drawSelect()
+        {
+            if (selectEnabled)
+            {
+                GL.Color4(.5f, .5f, .5f, .25f);
+                GL.Begin(BeginMode.Quads);
+                    GL.Vertex2(selectOrigX,selectOrigY);
+                    GL.Vertex2(selectNowX,selectOrigY);
+                    GL.Vertex2(selectNowX, selectNowY);
+                    GL.Vertex2(selectOrigX, selectNowY);
+                GL.End();
+            }
+        }
         void renderSeries(SeriesProjection series, float angle)
         {
             
@@ -609,6 +669,7 @@ namespace SplatterPlots
         void drawPoints(SeriesProjection series)
         {
             GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Lequal);
             //GL.Enable(EnableCap.PointSmooth);
             double range = Math.Max(series.xmax - series.xmin, series.ymax - series.ymin);
 
@@ -625,10 +686,7 @@ namespace SplatterPlots
             float offx = transformX(0) - (float)(Math.Floor(transformX(0) / m_clutterWindow) * m_clutterWindow);
             float offy = transformY(0) - (float)(Math.Floor(transformY(0) / m_clutterWindow) * m_clutterWindow);
 
-            GL.PointSize(5);
-            GL.Color3(series.color);            
-            GL.Begin(BeginMode.Points);
-
+            var allowedList = new List<ProjectedPoint>();
             for (int i = 0; i < series.dataPoints.Count; i++)
             {
                 float xgl = transformX(series.dataPoints[i].X);
@@ -648,12 +706,34 @@ namespace SplatterPlots
                 if (/*splatPM->showAllPoints ||*/clutterRad > m_clutterWindow && allow)
                 //if (allow)
                 {
-
-                    //GL.Color3(series.color);
-                    GL.Vertex3(series.dataPoints[i].X, series.dataPoints[i].Y, series.dataZval[i]);                    
+                    allowedList.Add(series.dataPoints[i]);
                 }
             }
+
+            Color modulated = ColorConv.Modulate(series.color, .9f);
+            GL.PointSize(7);
+            GL.Color3(modulated);
+            GL.Begin(BeginMode.Points);
+            allowedList.ForEach(p =>
+            {
+                if (p.Selected)
+                {
+                    GL.Color3(0.0f,1.0f,0.0f);
+                    GL.Vertex3(p.X, p.Y, p.Z);
+                    GL.Color3(modulated);
+                }
+                else
+                {
+                    GL.Vertex3(p.X, p.Y, p.Z);
+                }
+            });
             GL.End();
+            GL.PointSize(5);
+            GL.Color3(series.color);
+            GL.Begin(BeginMode.Points);
+            allowedList.ForEach(p => GL.Vertex3(p.X, p.Y, p.Z));
+            GL.End();
+            GL.DepthFunc(DepthFunction.Less);
             GL.Disable(EnableCap.DepthTest);
             //glyphProgram->release();
         }

@@ -139,7 +139,7 @@ void main()
 	if(c <= stripeWidth && wf>=upperLimit ||( dist>0.0 && dist<3.0)){
 		lch.x *= .90;
 		lch.y *= .90;
-		a=1.0;
+		a=1000.0;
 	}else{
 		if(wf>=upperLimit){
 			wf = 1.0;
