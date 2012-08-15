@@ -41,7 +41,7 @@ namespace SplatterPlots
 
             //assume first line is column names            
             var first = lines.First.Value;
-            var cols = first.Split(new char[]{',', '\t',' '}, StringSplitOptions.RemoveEmptyEntries);
+            var cols = first.Split(new char[]{',', '\t'}, StringSplitOptions.RemoveEmptyEntries);
             foreach (var col in cols)
             {
                 m_table.Columns.Add(col, typeof(string));
@@ -52,7 +52,7 @@ namespace SplatterPlots
             bool firstNumericLine = true;
             foreach (var line in lines)
             {
-                var array = line.Split(new char[] { ',', '\t', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var array = line.Split(new char[] { ',', '\t'}, StringSplitOptions.RemoveEmptyEntries);
                 m_table.Rows.Add(array);
                 if (firstNumericLine)
                 {
@@ -82,25 +82,27 @@ namespace SplatterPlots
             var groups = (from row in m_table.AsEnumerable()
                           select row.Field<string>(groupBy)).Distinct();
             foreach (var groupVal in groups)
-            {
-                var temp = new List<DataSeries>();
+            {                
                 var theGroupQuery = from row in m_table.AsEnumerable()
-                                    where row[groupBy] == groupVal
+                                    where row.Field<string>(groupBy) == groupVal
                                     select row;
                 var othersQuery = from row in m_table.AsEnumerable()
-                                  where row[groupBy] !=groupVal
+                                  where row.Field<string>(groupBy) !=groupVal
                                   select row;
                 DataSeries theGroup = new DataSeries(this, schema, Name + "." + groupVal);
                 theGroup.AddRowRange(theGroupQuery, schema);
+                theGroup.EndInit();
                 DataSeries Others = new DataSeries(this, schema, Name + ".Others");
-                theGroup.AddRowRange(othersQuery, schema);
+                Others.AddRowRange(othersQuery, schema);
+                Others.EndInit();
+                var temp = new List<DataSeries>();
                 temp.Add(theGroup);
                 temp.Add(Others);
                 res.Add(temp);                                                      
             }
                          
             return res;
-        }
+        }        
         public List<DataSeries> ConvertToDataSeries(DataFileSchema schema)
         {
             List<DataSeries> res = new List<DataSeries>();

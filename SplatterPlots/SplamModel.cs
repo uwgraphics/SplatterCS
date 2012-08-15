@@ -8,8 +8,7 @@ namespace SplatterPlots
     public class SplamModel
     {
         public int numDim { get; private set; }
-        private List<string> dimNames;
-        private SplatterModel m_Current;
+        private List<string> dimNames;        
         public List<SplatterModel> SplatList { get; private set; }
         public List<int> Iindex{ get; private set; }
         public List<int> Jindex{ get; private set; }
@@ -34,27 +33,7 @@ namespace SplatterPlots
                     Iindex.Add(i);
                     Jindex.Add(j);
                 }
-            }
-            setCurrent(0, 1);
+            }            
         }
-
-        public void setCurrent(SplatterModel curr)
-        {
-            m_Current = curr;
-        }
-        void setCurrent(int d0, int d1)
-        {
-            for (int i = 0; i < Iindex.Count; i++)
-            {
-                if (Iindex[i] == d0 || Jindex[i] == d1)
-                {
-                    m_Current = SplatList[i];
-                    return;
-                }
-            }
-        }
-
-        public SplatterModel Current { get { return m_Current; } }
-        
     }
 }

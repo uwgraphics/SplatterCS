@@ -39,16 +39,16 @@ namespace SplatterPlots
 
     public class SplatterModel
     {
-        public SplatterModel(List<DataSeries> datas, int d0, int d1)
+        public SplatterModel(List<DataSeries> datas, int d0, int d1): this(datas, datas.First().ColumnNames[d0],datas.First().ColumnNames[d1])
+        {
+        }
+        public SplatterModel(List<DataSeries> datas, string dim0Name, string dim1Name)
         {
             xmax = float.MinValue;
             xmin = float.MaxValue;
             ymax = float.MinValue;
             ymin = float.MaxValue;
             showAllPoints = true;
-
-            dim0Name = datas.First().ColumnNames[d0];
-            dim1Name = datas.First().ColumnNames[d1];
 
             for (int i = 0; i < datas.Count; i++)
             {

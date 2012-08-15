@@ -37,12 +37,12 @@
             this.buttonRemove = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1vsAll = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.buttonSplat = new System.Windows.Forms.Button();
             this.buttonSplam = new System.Windows.Forms.Button();
-            this.button1vsAll = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -144,6 +144,16 @@
             this.panel1.Size = new System.Drawing.Size(91, 87);
             this.panel1.TabIndex = 8;
             // 
+            // button1vsAll
+            // 
+            this.button1vsAll.Location = new System.Drawing.Point(0, 32);
+            this.button1vsAll.Name = "button1vsAll";
+            this.button1vsAll.Size = new System.Drawing.Size(91, 23);
+            this.button1vsAll.TabIndex = 7;
+            this.button1vsAll.Text = "Add to 1vsAll";
+            this.button1vsAll.UseVisualStyleBackColor = true;
+            this.button1vsAll.Click += new System.EventHandler(this.button1vsAll_Click);
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -187,16 +197,6 @@
             this.buttonSplam.Text = "Show SPLAM";
             this.buttonSplam.UseVisualStyleBackColor = true;
             this.buttonSplam.Click += new System.EventHandler(this.buttonSplam_Click);
-            // 
-            // button1vsAll
-            // 
-            this.button1vsAll.Location = new System.Drawing.Point(3, 32);
-            this.button1vsAll.Name = "button1vsAll";
-            this.button1vsAll.Size = new System.Drawing.Size(88, 23);
-            this.button1vsAll.TabIndex = 7;
-            this.button1vsAll.Text = "Add to 1vsAll";
-            this.button1vsAll.UseVisualStyleBackColor = true;
-            this.button1vsAll.Click += new System.EventHandler(this.button1vsAll_Click);
             // 
             // Form1
             // 

@@ -14,6 +14,7 @@ namespace SplatterPlots
     {
         private Dictionary<ListViewItem, DataFile> m_Files = new Dictionary<ListViewItem, DataFile>();
         private Dictionary<ListViewItem, DataSeries> m_Series = new Dictionary<ListViewItem, DataSeries>();
+        private Dictionary<string, DataSeries> m_MasterSeries = new Dictionary<string, DataSeries>();
         private SingleSplatterDialog m_SingleSplatterDialog = null;
         private SplamDialog m_SplamDialog = null;
         private SelectionTable m_SelectionDialog = null;
@@ -261,13 +262,24 @@ namespace SplatterPlots
             var dialog = new AddTo1vsAllDialog();
             if (listViewDataFiles.SelectedItems.Count > 0)
             {
+                if (m_OneVersusAllDialog != null)
+                {
+                    m_OneVersusAllDialog.Close();
+                }
                 var item = listViewDataFiles.SelectedItems[0];
                 var dataFile = m_Files[item];
                 dialog.SetDataFile(dataFile);
                 var res = dialog.ShowDialog(this);
                 if (res == System.Windows.Forms.DialogResult.OK)
-                {
-                    
+                {                    
+                    var lists = dataFile.ConvertToOneVsAllDataSeries(dialog.GroupBy, dialog.HorizontalDim, dialog.VerticalDim);
+                    OneVsAllModel model = new OneVsAllModel(lists, dialog.HorizontalDim, dialog.VerticalDim);
+                    OneVersusAllDialog.SetModel(model);
+                    if (!OneVersusAllDialog.Visible)
+                    {
+                        OneVersusAllDialog.Show(this);
+                    }
+                    OneVersusAllDialog.BringToFront();
                 }
             }
         }
