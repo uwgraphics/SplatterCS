@@ -144,6 +144,8 @@ void main()
 		if(wf>=upperLimit){
 			wf = 1.0;
 			a = 1.0;
+		}else{
+			wf = wf/upperLimit;
 		}
 
 		lch.x = lch.x*wf + (1.0-wf)*100.0;

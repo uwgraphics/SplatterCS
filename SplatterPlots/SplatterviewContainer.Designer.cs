@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.verticalLabel1 = new SplatterPlots.VerticalLabel();
             this.label1 = new System.Windows.Forms.Label();
+            this.verticalLabel1 = new SplatterPlots.VerticalLabel();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,6 +50,16 @@
             this.tableLayoutPanel1.Size = new System.Drawing.Size(150, 150);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
+            // label1
+            // 
+            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(67, 133);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "label1";
+            // 
             // verticalLabel1
             // 
             this.verticalLabel1.Anchor = System.Windows.Forms.AnchorStyles.None;
@@ -62,16 +72,6 @@
             this.verticalLabel1.Text = "verticalLabel1";
             this.verticalLabel1.TextDrawMode = SplatterPlots.DrawMode.BottomUp;
             this.verticalLabel1.TransparentBackground = false;
-            // 
-            // label1
-            // 
-            this.label1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(67, 133);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(35, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "label1";
             // 
             // SplatterviewContainer
             // 

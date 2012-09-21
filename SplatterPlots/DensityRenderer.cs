@@ -12,7 +12,7 @@ namespace SplatterPlots
         public DensityRenderer()
         {            
         }
-
+        public int[] Histogram { get { return m_Histogram; } }
         public void Init(int w, int h, OpenTK.Graphics.IGraphicsContext context)
         {
             Width = w;
@@ -145,8 +145,19 @@ namespace SplatterPlots
                 maxVal = Math.Max(BlurData[i], maxVal);
             }
 
-            JumpFlooding(upperLimit);
+            float step = maxVal / 100.0f;
+            for (int i = 0; i < m_Histogram.Length; i++)
+            {
+                m_Histogram[i] = 0;
+            }
+            for (int i = 0; i < Width * Height; i++)
+            {
+                int index = Math.Min(Convert.ToInt32(Math.Floor(BlurData[i] / step)), m_Histogram.Length - 1);
 
+                m_Histogram[index]++;
+            }
+
+            JumpFlooding(upperLimit);
         }
         public void Shade(float r, float g, float b, float angle, float stripePeriod, float stripeWidth, float lowerLimit, float upperLimit)
         {
@@ -325,6 +336,7 @@ namespace SplatterPlots
         int Height;
         float[] BlurData;
         float[] DistData;
+        int[] m_Histogram = new int[100];
         float maxVal;
         ShaderProgram blurProgram;
         ShaderProgram coloring;

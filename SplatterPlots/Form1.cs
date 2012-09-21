@@ -13,8 +13,7 @@ namespace SplatterPlots
     public partial class Form1 : Form
     {
         private Dictionary<ListViewItem, DataFile> m_Files = new Dictionary<ListViewItem, DataFile>();
-        private Dictionary<ListViewItem, DataSeries> m_Series = new Dictionary<ListViewItem, DataSeries>();
-        private Dictionary<string, DataSeries> m_MasterSeries = new Dictionary<string, DataSeries>();
+        private Dictionary<ListViewItem, DataSeries> m_Series = new Dictionary<ListViewItem, DataSeries>();        
         private SingleSplatterDialog m_SingleSplatterDialog = null;
         private SplamDialog m_SplamDialog = null;
         private SelectionTable m_SelectionDialog = null;
@@ -62,9 +61,7 @@ namespace SplatterPlots
             {
                 if (m_OneVersusAllDialog == null || m_OneVersusAllDialog.IsDisposed)
                 {
-                    m_OneVersusAllDialog = new OneVersusAllDialog();
-                    m_OneVersusAllDialog.SplatterSelection += new EventHandler(m_SplamDialog_SplatterSelection);
-                    m_OneVersusAllDialog.PointSelection += new EventHandler(SplatterDialogs_PointSelection);
+                    m_OneVersusAllDialog = new OneVersusAllDialog();                    
                 }
                 return m_OneVersusAllDialog;
             }

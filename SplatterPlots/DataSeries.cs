@@ -84,6 +84,7 @@ namespace SplatterPlots
         public Color Color { get; set; }
         public List<string> ColumnNames { get; set; }
         public Dictionary<string, ColumnData> ColumnData { get; set; }
+        public List<DataSeriesRow> Rows { get { return m_Rows; } }
         
         public string Name { get; private set; }
         #endregion

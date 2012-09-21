@@ -73,34 +73,80 @@ namespace SplatterPlots
         #endregion
         #region Public
         public List<List<DataSeries>> ConvertToOneVsAllDataSeries(string groupBy, string dim0, string dim1)
-        {
+        {           
+            //var res = new List<List<DataSeries>>();
+            //var schema = new DataFileSchema(this);
+            //schema.ColumnNames.ForEach(col => schema.ColumnNumericMap[col] = false);
+            //schema.ColumnNumericMap[dim0] = true;
+            //schema.ColumnNumericMap[dim1] = true;
+            //var groups = (from row in m_table.AsEnumerable()
+            //              select row.Field<string>(groupBy)).Distinct();
+            //var colors = ColorConv.pickIsoCols(74.0f, 2, .5f, (float)Math.PI);
+            //foreach (var groupVal in groups)
+            //{                
+            //    var theGroupQuery = from row in m_table.AsEnumerable()
+            //                        where row.Field<string>(groupBy) == groupVal
+            //                        select row;
+            //    var othersQuery = from row in m_table.AsEnumerable()
+            //                      where row.Field<string>(groupBy) !=groupVal
+            //                      select row;
+            //    DataSeries theGroup = new DataSeries(this, schema, Name + "." + groupVal);
+            //    theGroup.AddRowRange(theGroupQuery, schema);
+            //    theGroup.EndInit();
+            //    theGroup.Color = colors[0];
+            //    DataSeries Others = new DataSeries(this, schema, Name + ".Others");
+            //    Others.AddRowRange(othersQuery, schema);
+            //    Others.EndInit();
+            //    Others.Color = colors[1];
+            //    var temp = new List<DataSeries>();
+            //    temp.Add(theGroup);
+            //    temp.Add(Others);
+            //    res.Add(temp);                
+            //}
+                         
+            //return res;
+            //need to make sure these guys are linked
+
             var res = new List<List<DataSeries>>();
             var schema = new DataFileSchema(this);
             schema.ColumnNames.ForEach(col => schema.ColumnNumericMap[col] = false);
             schema.ColumnNumericMap[dim0] = true;
             schema.ColumnNumericMap[dim1] = true;
-            var groups = (from row in m_table.AsEnumerable()
-                          select row.Field<string>(groupBy)).Distinct();
-            foreach (var groupVal in groups)
-            {                
-                var theGroupQuery = from row in m_table.AsEnumerable()
-                                    where row.Field<string>(groupBy) == groupVal
-                                    select row;
-                var othersQuery = from row in m_table.AsEnumerable()
-                                  where row.Field<string>(groupBy) !=groupVal
-                                  select row;
-                DataSeries theGroup = new DataSeries(this, schema, Name + "." + groupVal);
-                theGroup.AddRowRange(theGroupQuery, schema);
-                theGroup.EndInit();
-                DataSeries Others = new DataSeries(this, schema, Name + ".Others");
-                Others.AddRowRange(othersQuery, schema);
-                Others.EndInit();
+            schema.GroupBy = groupBy;
+            var groups = ConvertToDataSeries(schema);
+            var ordered = groups.OrderByDescending(g => g.Rows.Count).ToList();
+            for (int i = 0; i < 10; i++)
+            {
                 var temp = new List<DataSeries>();
-                temp.Add(theGroup);
+                temp.Add(ordered[i]);
+                DataSeries Others = new DataSeries(this, schema, Name + ".Others");
+                for (int j = 0; j < ordered.Count; j++)
+                {
+                    if (i != j)
+                    {
+                        ordered[j].Rows.ForEach(r => Others.AddRow(r));
+                    }
+                }
+                Others.EndInit();
                 temp.Add(Others);
-                res.Add(temp);                                                      
+                res.Add(temp);
             }
-                         
+            for (int i = 10; i < groups.Count; i++)
+            {
+                var temp = new List<DataSeries>();
+                temp.Add(groups[i]);
+                DataSeries Others = new DataSeries(this, schema, Name + ".Others");
+                for (int j = 0; j < groups.Count; j++)
+                {
+                    if (i != j)
+                    {
+                        groups[j].Rows.ForEach(r => Others.AddRow(r));
+                    }
+                }
+                Others.EndInit();
+                temp.Add(Others);
+                res.Add(temp);
+            }
             return res;
         }        
         public List<DataSeries> ConvertToDataSeries(DataFileSchema schema)

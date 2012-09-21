@@ -23,6 +23,7 @@ namespace SplatterPlots
         }
 
         public bool enabled { get; set; }
+        public int[] Histogram { get; set; }
 
         public List<ProjectedPoint> dataPoints { get; private set; }
         public Color color { get { return m_Data.Color; } }
@@ -42,8 +43,10 @@ namespace SplatterPlots
         public SplatterModel(List<DataSeries> datas, int d0, int d1): this(datas, datas.First().ColumnNames[d0],datas.First().ColumnNames[d1])
         {
         }
-        public SplatterModel(List<DataSeries> datas, string dim0Name, string dim1Name)
+        public SplatterModel(List<DataSeries> datas, string dim0N, string dim1N)
         {
+            dim0Name = dim0N;
+            dim1Name = dim1N;
             xmax = float.MinValue;
             xmin = float.MaxValue;
             ymax = float.MinValue;

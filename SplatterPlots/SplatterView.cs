@@ -185,7 +185,7 @@ namespace SplatterPlots
             screenOffsetX = Width / 2;
             screenOffsetY = Height / 2;
             splatPM = spm;
-
+            densityMap.Clear();
             if (densityMap.Count <= 0)
             {
                 foreach (var series in splatPM.seriesList.Values)
@@ -500,6 +500,7 @@ namespace SplatterPlots
             paintPoints(series);
             densityMap[series.name].Blur(m_bandwidth, m_gain);
             densityMap[series.name].UnBind();
+            series.Histogram = densityMap[series.name].Histogram;
         }
         void paintPoints(SeriesProjection series)
         {

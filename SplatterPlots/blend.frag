@@ -142,17 +142,34 @@ void main()
 		//float Ldec = lf;
 		float Nf = 0;
 		float Npf = 0;
+		bool inshape = false;
 
 		for(int i=0;i<N;i++){
 			vec3 lab = RGBtoLAB(colors[i].xyz);
-        
-			x+= lab.x*colors[i].w;
-			y+= lab.y*colors[i].w;
-			z+= lab.z*colors[i].w;
-			Nf += colors[i].w;
-			Npf += min(1.0,colors[i].w);
-			//Cdec*=Cdec;
-			//Ldec*=Ldec;
+			if(!inshape){
+				if(colors[i].w>=1){
+					inshape = true;
+					x = lab.x*colors[i].w;
+					y = lab.y*colors[i].w;
+					z = lab.z*colors[i].w;
+					Nf = colors[i].w;
+					Npf = min(1.0,colors[i].w);
+				}else{
+					x+= lab.x*colors[i].w;
+					y+= lab.y*colors[i].w;
+					z+= lab.z*colors[i].w;
+					Nf += colors[i].w;
+					Npf += min(1.0,colors[i].w);
+				}
+			}else{
+				if(colors[i].w>=1){
+					x+= lab.x*colors[i].w;
+					y+= lab.y*colors[i].w;
+					z+= lab.z*colors[i].w;
+					Nf += colors[i].w;
+					Npf += min(1.0,colors[i].w);
+				}
+			}
 		}
 		float pf = max(Npf-1.0,0.0);
 		float Cdec = pow(cf,pf);
