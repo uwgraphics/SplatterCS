@@ -12,36 +12,6 @@ using QuickFont;
 
 namespace SplatterPlots
 {
-    public enum MaxMode
-    {
-        Global,
-        PerGroup
-    }
-    public class Stat
-    {
-        public float Bandwidth { get; set; }
-        public float Threshold { get; set; }
-        public float DensityThreshold { get; set; }
-        public long Milliseconds { get; set; }
-        public int GroupNum { get; set; }
-        public int PointNum { get; set; }
-        public float ClutterWindow { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public Stat(SplatterView view,long time,int groupN, int pointN)
-        {
-            Bandwidth = view.Bandwidth;
-            Threshold = view.ContourThreshold;
-            DensityThreshold = view.DensityThreshold;
-            Milliseconds = time;
-            PointNum = pointN;
-            GroupNum = groupN;
-            ClutterWindow = view.ClutterWindow;
-            Width = view.Width;
-            Height = Height;
-
-        }
-    }
     public partial class SplatterView: GLControl
     {
         private static OpenTK.Graphics.GraphicsMode GetMode(){
@@ -586,16 +556,31 @@ namespace SplatterPlots
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
             setZoomPan();
 
+            GL.EnableVertexAttribArray(0);
+            var vertices = series.dataPoints.Select(p => new Vector2(p.X, p.Y)).ToArray();
+            int vbo;
+            GL.GenBuffers(1, out vbo);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BufferData<Vector2>(BufferTarget.ArrayBuffer,
+                                   new IntPtr(vertices.Length * Vector2.SizeInBytes),
+                                   vertices, BufferUsageHint.StaticDraw);
+
+            GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 0, 0);
+
             
             GL.PointSize(1);
             GL.Color4(1.0f, 0, 0,1.0f);
-            GL.Begin(BeginMode.Points);
-            foreach (var point in series.dataPoints)
-            {
-                GL.Vertex2(point.X,point.Y);
-            }
+            //GL.Begin(BeginMode.Points);
+            //foreach (var point in series.dataPoints)
+            //{
+            //    GL.Vertex2(point.X,point.Y);
+            //}
 
-            GL.End();
+            //GL.End();
+            GL.DrawArrays(BeginMode.Points, 0, vertices.Length);            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.DeleteBuffers(1, ref vbo);
+            GL.DisableVertexAttribArray(0); ;
             GL.PopAttrib();
             GL.PopMatrix();
         }
@@ -740,7 +725,7 @@ namespace SplatterPlots
             GL.MatrixMode(MatrixMode.Modelview);
         }
         void drawPoints(SeriesProjection series)
-        {
+        {            
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Lequal);
             //GL.Enable(EnableCap.PointSmooth);
@@ -783,6 +768,19 @@ namespace SplatterPlots
                 }
             }
 
+
+            //use vbo???//////////////////////////////////////////////
+            GL.EnableVertexAttribArray(0);
+            var vertices = allowedList.Select(p => new Vector3(p.X, p.Y, p.Z)).ToArray();
+            int vbo;
+            GL.GenBuffers(1, out vbo);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            GL.BufferData<Vector3>(BufferTarget.ArrayBuffer,
+                                   new IntPtr(vertices.Length * Vector3.SizeInBytes),
+                                   vertices, BufferUsageHint.StaticDraw);
+
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
+
             /*Color modulated = ColorConv.Modulate(series.color, .9f);
             GL.PointSize(7);
             GL.Color3(modulated);
@@ -803,11 +801,15 @@ namespace SplatterPlots
             GL.End();*/
             GL.PointSize(5);
             GL.Color3(series.color);
-            GL.Begin(BeginMode.Points);
-            allowedList.ForEach(p => GL.Vertex3(p.X, p.Y, p.Z));
-            GL.End();
+            //GL.Begin(BeginMode.Points);
+            //allowedList.ForEach(p => GL.Vertex3(p.X, p.Y, p.Z));
+            //GL.End();
+            GL.DrawArrays(BeginMode.Points, 0, vertices.Length);
             GL.DepthFunc(DepthFunction.Less);
             GL.Disable(EnableCap.DepthTest);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.DeleteBuffers(1, ref vbo);
+            GL.DisableVertexAttribArray(0);
             //glyphProgram->release();
         }
         #endregion
@@ -838,5 +840,35 @@ namespace SplatterPlots
         //}        
         #endregion
         #endregion
+    }
+    public enum MaxMode
+    {
+        Global,
+        PerGroup
+    }
+    public class Stat
+    {
+        public float Bandwidth { get; set; }
+        public float Threshold { get; set; }
+        public float DensityThreshold { get; set; }
+        public long Milliseconds { get; set; }
+        public int GroupNum { get; set; }
+        public int PointNum { get; set; }
+        public float ClutterWindow { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public Stat(SplatterView view, long time, int groupN, int pointN)
+        {
+            Bandwidth = view.Bandwidth;
+            Threshold = view.ContourThreshold;
+            DensityThreshold = view.DensityThreshold;
+            Milliseconds = time;
+            PointNum = pointN;
+            GroupNum = groupN;
+            ClutterWindow = view.ClutterWindow;
+            Width = view.Width;
+            Height = Height;
+
+        }
     }
 }
