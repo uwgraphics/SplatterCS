@@ -63,6 +63,8 @@
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.buttonSplatter = new System.Windows.Forms.Button();
             this.buttonKDE = new System.Windows.Forms.Button();
+            this.radioButtonGlobal = new System.Windows.Forms.RadioButton();
+            this.radioButtonRelative = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarYScaling)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarBandwith)).BeginInit();
@@ -459,6 +461,8 @@
             // 
             this.flowLayoutPanel2.Controls.Add(this.buttonSplatter);
             this.flowLayoutPanel2.Controls.Add(this.buttonKDE);
+            this.flowLayoutPanel2.Controls.Add(this.radioButtonGlobal);
+            this.flowLayoutPanel2.Controls.Add(this.radioButtonRelative);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 453);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
             this.flowLayoutPanel2.Size = new System.Drawing.Size(447, 31);
@@ -484,6 +488,29 @@
             this.buttonKDE.UseVisualStyleBackColor = true;
             this.buttonKDE.Click += new System.EventHandler(this.buttonKDE_Click);
             // 
+            // radioButtonGlobal
+            // 
+            this.radioButtonGlobal.AutoSize = true;
+            this.radioButtonGlobal.Checked = true;
+            this.radioButtonGlobal.Location = new System.Drawing.Point(165, 3);
+            this.radioButtonGlobal.Name = "radioButtonGlobal";
+            this.radioButtonGlobal.Size = new System.Drawing.Size(100, 17);
+            this.radioButtonGlobal.TabIndex = 2;
+            this.radioButtonGlobal.TabStop = true;
+            this.radioButtonGlobal.Text = "Use Global Max";
+            this.radioButtonGlobal.UseVisualStyleBackColor = true;
+            this.radioButtonGlobal.CheckedChanged += new System.EventHandler(this.radioButtonGlobal_CheckedChanged);
+            // 
+            // radioButtonRelative
+            // 
+            this.radioButtonRelative.AutoSize = true;
+            this.radioButtonRelative.Location = new System.Drawing.Point(271, 3);
+            this.radioButtonRelative.Name = "radioButtonRelative";
+            this.radioButtonRelative.Size = new System.Drawing.Size(118, 17);
+            this.radioButtonRelative.TabIndex = 3;
+            this.radioButtonRelative.Text = "Use Per Group Max";
+            this.radioButtonRelative.UseVisualStyleBackColor = true;
+            // 
             // SliderController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -507,6 +534,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trackBarXScaling)).EndInit();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -548,5 +576,7 @@
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button buttonSplatter;
         private System.Windows.Forms.Button buttonKDE;
+        private System.Windows.Forms.RadioButton radioButtonGlobal;
+        private System.Windows.Forms.RadioButton radioButtonRelative;
     }
 }

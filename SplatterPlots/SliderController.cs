@@ -22,8 +22,8 @@ namespace SplatterPlots
             m_views = views;
             allowUpdate = false;
             trackBarBandwith.Value = (int)m_views.First().Bandwidth;
-            trackBarContourThresh.Value = (int)(m_views.First().Gain * 100);
-            trackBarDensityThresh.Value = (int)(m_views.First().LowerLimit * 100);
+            trackBarContourThresh.Value = (int)(m_views.First().ContourThreshold * 100);
+            trackBarDensityThresh.Value = (int)(m_views.First().DensityThreshold * 100);
             trackBarChromaF.Value = (int)(m_views.First().ChromaF * 100);
             trackBarLightnessF.Value = (int)(m_views.First().LightnessF * 100);
             trackBarClutterRad.Value = (int)m_views.First().ClutterWindow;
@@ -53,7 +53,7 @@ namespace SplatterPlots
             {
                 return;
             }
-            m_views.ForEach(view => view.Gain = val);
+            m_views.ForEach(view => view.ContourThreshold = val);
         }
         private void trackBarDensityThresh_ValueChanged(object sender, EventArgs e)
         {
@@ -64,7 +64,7 @@ namespace SplatterPlots
             {
                 return;
             }
-            m_views.ForEach(view => view.LowerLimit = val);
+            m_views.ForEach(view => view.DensityThreshold = val);
         }
         private void trackBarChromaF_ValueChanged(object sender, EventArgs e)
         {
@@ -123,7 +123,7 @@ namespace SplatterPlots
         }
         private void trackBarXScaling_ValueChanged(object sender, EventArgs e)
         {
-            float val = trackBarStripePeriod.Value / 10.0f;
+            float val = trackBarXScaling.Value / 10.0f;
             labelXScaling.Text = string.Format("{0:G}", val);
             labelXScaling.Refresh();
             if (m_views == null || !allowUpdate)
@@ -134,7 +134,7 @@ namespace SplatterPlots
         }
         private void trackBarYScaling_ValueChanged(object sender, EventArgs e)
         {
-            float val = trackBarStripePeriod.Value / 10.0f;
+            float val = trackBarYScaling.Value / 10.0f;
             labelYScaling.Text = string.Format("{0:G}", val);
             labelYScaling.Refresh();
             if (m_views == null || !allowUpdate)
@@ -159,6 +159,11 @@ namespace SplatterPlots
             trackBarClutterRad.Value = 10;
             trackBarDensityThresh.Value = 1;
             trackBarBandwith.Value = 12;
+        }
+
+        private void radioButtonGlobal_CheckedChanged(object sender, EventArgs e)
+        {
+            m_views.ForEach(view => view.MaxMode = radioButtonGlobal.Checked ? MaxMode.Global : MaxMode.PerGroup);
         }
     }
 }

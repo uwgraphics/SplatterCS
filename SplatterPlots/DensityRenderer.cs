@@ -86,7 +86,7 @@ namespace SplatterPlots
             BlurData = new float[Width * Height];
             DistData = new float[Width * Height];
         }
-        public void Blur(float sigma, float upperLimit)
+        public void Blur(float sigma)
         {
             int kw = (int)(Math.Ceiling(sigma * 3));
             blurProgram.Bind();
@@ -139,25 +139,30 @@ namespace SplatterPlots
 
             GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat.Red, PixelType.Float, BlurData);
 
-            maxVal = float.MinValue;
+            MaxVal = float.MinValue;
             for (int i = 0; i < Width * Height; i++)
             {
-                maxVal = Math.Max(BlurData[i], maxVal);
+                MaxVal = Math.Max(BlurData[i], MaxVal);
             }
 
-            float step = maxVal / 100.0f;
+            float step = MaxVal / 100.0f;
             for (int i = 0; i < m_Histogram.Length; i++)
             {
                 m_Histogram[i] = 0;
             }
-            for (int i = 0; i < Width * Height; i++)
+            if (MaxVal != 0)
             {
-                int index = Math.Min(Convert.ToInt32(Math.Floor(BlurData[i] / step)), m_Histogram.Length - 1);
+                for (int i = 0; i < Width * Height; i++)
+                {
+                    int index = Math.Min(Convert.ToInt32(Math.Floor(BlurData[i] / step)), m_Histogram.Length - 1);
 
-                m_Histogram[index]++;
+                    m_Histogram[index]++;
+                }
             }
-
-            JumpFlooding(upperLimit);
+            else
+            {
+                m_Histogram[0] = Width * Height;
+            }            
         }
         public void Shade(float r, float g, float b, float angle, float stripePeriod, float stripeWidth, float lowerLimit, float upperLimit)
         {
@@ -178,7 +183,7 @@ namespace SplatterPlots
             coloring.SetUniform("stripeWidth", stripeWidth);
             coloring.SetUniform("lowerLimit", lowerLimit);
             coloring.SetUniform("upperLimit", upperLimit);
-            coloring.SetUniform("maxVal", maxVal);
+            coloring.SetUniform("maxVal", MaxVal);
 
             GL.LoadMatrix(ref Matrix4.Identity);
             GL.Color4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -206,7 +211,7 @@ namespace SplatterPlots
             JFA.Bind();
             JFA.SetUniform("init", 1);
             JFA.SetUniform("upperLimit", upperLimit);
-            JFA.SetUniform("maxVal", maxVal);
+            JFA.SetUniform("maxVal", MaxVal);
 
             GL.LoadMatrix(ref Matrix4.Identity);
 
@@ -285,7 +290,7 @@ namespace SplatterPlots
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             int temp = -99;
             GL.GetInteger(GetPName.DrawBuffer, out temp);
-            GL.BindTexture(TextureTarget.Texture2D, textureHandle0);
+           // GL.BindTexture(TextureTarget.Texture2D, textureHandle0);
         }
         public void CleanUp()
         {
@@ -341,5 +346,7 @@ namespace SplatterPlots
         ShaderProgram blurProgram;
         ShaderProgram coloring;
         ShaderProgram JFA;
+
+        public float MaxVal { get { return maxVal; } set { maxVal = value; } }
     }
 }

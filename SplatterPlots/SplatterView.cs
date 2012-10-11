@@ -12,6 +12,36 @@ using QuickFont;
 
 namespace SplatterPlots
 {
+    public enum MaxMode
+    {
+        Global,
+        PerGroup
+    }
+    public class Stat
+    {
+        public float Bandwidth { get; set; }
+        public float Threshold { get; set; }
+        public float DensityThreshold { get; set; }
+        public long Milliseconds { get; set; }
+        public int GroupNum { get; set; }
+        public int PointNum { get; set; }
+        public float ClutterWindow { get; set; }
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public Stat(SplatterView view,long time,int groupN, int pointN)
+        {
+            Bandwidth = view.Bandwidth;
+            Threshold = view.ContourThreshold;
+            DensityThreshold = view.DensityThreshold;
+            Milliseconds = time;
+            PointNum = pointN;
+            GroupNum = groupN;
+            ClutterWindow = view.ClutterWindow;
+            Width = view.Width;
+            Height = Height;
+
+        }
+    }
     public partial class SplatterView: GLControl
     {
         private static OpenTK.Graphics.GraphicsMode GetMode(){
@@ -42,8 +72,8 @@ namespace SplatterPlots
         int selectNowX;
         int selectNowY;
 
-        float m_gain;
-        float m_lowerLimit;
+        float m_contourThreshold;
+        float m_densityThreshold;
         float m_bandwidth;
         float m_stripePeriod;
         float m_stripeWidth;
@@ -52,6 +82,7 @@ namespace SplatterPlots
         float m_scaleFactorX;
         float m_scaleFactorY;
         float m_clutterWindow = 100;
+        MaxMode m_MaxMode;
 
         bool dClickable;
 
@@ -85,21 +116,28 @@ namespace SplatterPlots
             get { return m_clutterWindow; }
             set { m_clutterWindow = value; Refresh(); }
         }
-        public float Gain
+        public float ContourThreshold
         {
-            get { return m_gain; }
-            set { m_gain = value; Refresh(); }
+            get { return m_contourThreshold; }
+            set { m_contourThreshold = value; Refresh(); }
         }
         public float LightnessF
         {
             get { return m_lightnessF; }
             set { m_lightnessF = value; Refresh(); }
         }
-        public float LowerLimit
+        public float DensityThreshold
         {
-            get { return m_lowerLimit; }
-            set { m_lowerLimit = value; Refresh(); }
+            get { return m_densityThreshold; }
+            set { m_densityThreshold = Math.Max(value,0.001f); Refresh(); }
+        }       
+
+        public MaxMode MaxMode
+        {
+            get { return m_MaxMode; }
+            set { m_MaxMode = value; Refresh(); }
         }
+        
         public float ScaleFactorX
         {
             get { return m_scaleFactorX; }
@@ -132,10 +170,11 @@ namespace SplatterPlots
             m_lightnessF = .95f;
             m_clutterWindow = 30.0f;
             m_bandwidth = 10;
-            m_gain = 1;
-            m_lowerLimit = 0;
+            m_contourThreshold = 1;
+            m_densityThreshold = 0;
             m_stripePeriod = 50;
             m_stripeWidth = 1;
+            m_MaxMode = MaxMode.Global;
 
             InitializeComponent();
             offsetX = 0;
@@ -216,7 +255,16 @@ namespace SplatterPlots
         {
             try
             {
+                var start = DateTime.Now;
                 glPaint();
+                var stop = DateTime.Now;
+                var duration = stop - start;
+                if (Model != null && Model.seriesList.Count > 0)
+                {
+                    var log =   new Stat(this, duration.Milliseconds, Model.seriesList.Count,
+                                Model.seriesList.Values.Sum(sl => sl.dataPoints.Count));
+                    Logger.Log(log);
+                }
             }
             catch (Exception ex)
             {
@@ -401,6 +449,26 @@ namespace SplatterPlots
             {
                 if (series.enabled)
                 {
+                    blurPoints(series);
+                }
+            }
+            if (MaxMode == MaxMode.Global)
+            {
+                float max = float.MinValue;
+                foreach (var d in densityMap.Values)
+                {
+                    max = Math.Max(d.MaxVal, max);
+                }
+                foreach (var d in densityMap.Values)
+                {
+                    d.MaxVal = max;
+                }
+            }
+            foreach (var series in splatPM.seriesList.Values)
+            {
+                if (series.enabled)
+                {
+                    doDistanceTransform(series);
                     renderSeries(series, (float)((Math.PI / splatPM.seriesList.Count) * I));
                     N++;
                     I++;
@@ -487,10 +555,8 @@ namespace SplatterPlots
             GL.ClearColor(0, 0, 0, 0);
             GL.Clear(ClearBufferMask.DepthBufferBit | ClearBufferMask.ColorBufferBit);
 
-            blurPoints(series);
-
             densityMap[series.name].Bind();
-            densityMap[series.name].Shade(series.color.R / 255.0f, series.color.G / 255.0f, series.color.B / 255.0f, angle, m_stripePeriod, m_stripeWidth, m_lowerLimit, m_gain);
+            densityMap[series.name].Shade(series.color.R / 255.0f, series.color.G / 255.0f, series.color.B / 255.0f, angle, m_stripePeriod, m_stripeWidth, m_densityThreshold, m_contourThreshold);
             densityMap[series.name].UnBind();
         }
         void blurPoints(SeriesProjection series)
@@ -498,9 +564,15 @@ namespace SplatterPlots
             densityMap[series.name].Bind();
             densityMap[series.name].Clear();
             paintPoints(series);
-            densityMap[series.name].Blur(m_bandwidth, m_gain);
+            densityMap[series.name].Blur(m_bandwidth);            
             densityMap[series.name].UnBind();
             series.Histogram = densityMap[series.name].Histogram;
+        }
+        void doDistanceTransform(SeriesProjection series)
+        {
+            densityMap[series.name].Bind();            
+            densityMap[series.name].JumpFlooding(m_contourThreshold);
+            densityMap[series.name].UnBind();
         }
         void paintPoints(SeriesProjection series)
         {
@@ -711,7 +783,7 @@ namespace SplatterPlots
                 }
             }
 
-            Color modulated = ColorConv.Modulate(series.color, .9f);
+            /*Color modulated = ColorConv.Modulate(series.color, .9f);
             GL.PointSize(7);
             GL.Color3(modulated);
             GL.Begin(BeginMode.Points);
@@ -728,7 +800,7 @@ namespace SplatterPlots
                     GL.Vertex3(p.X, p.Y, p.Z);
                 }
             });
-            GL.End();
+            GL.End();*/
             GL.PointSize(5);
             GL.Color3(series.color);
             GL.Begin(BeginMode.Points);
