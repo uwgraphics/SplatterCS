@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using OpenTK;
+using System.Data;
 
 namespace SplatterPlots
 {
 
     public class SeriesProjection
     {
-        private DataSeries m_Data;
+        private DataSeries m_Data;        
         public void Init(DataSeries data, string d0, string d1)
         {
             m_Data = data;
@@ -18,14 +19,16 @@ namespace SplatterPlots
             name = data.Name;
             dim0 = d0;
             dim1 = d1;
-            //data.setIndeces(dim0, dim1);
-            dataPoints = data.getXYValues(dim0,dim1);            
+            //data.setIndeces(dim0, dim1);            
+            dataTable = data.getXYValuesTable(dim0,dim1);
+            dataPoints = data.getXYValues(dim0, dim1).ToArray();            
         }
 
+        public DataTable dataTable { get; set; }
         public bool enabled { get; set; }
         public int[] Histogram { get; set; }
 
-        public List<ProjectedPoint> dataPoints { get; private set; }
+        public ProjectedPoint[] dataPoints { get; private set; }
         public Color color { get { return m_Data.Color; } }
         public string name { get; private set; }
 
@@ -69,7 +72,7 @@ namespace SplatterPlots
         {
             foreach (var series in seriesList.Values)
             {
-                series.dataPoints.ForEach(p => p.Selected = IsSelected(p, xmin, ymin, xmax, ymax));
+                //series.dataPoints.ForEach(p => p.Selected = IsSelected(p, xmin, ymin, xmax, ymax));
             }
         }
         public void SetEnabled(string group, bool value)

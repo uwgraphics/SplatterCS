@@ -10,9 +10,11 @@ namespace SplatterPlots
     public class DensityRenderer
     {        
         public DensityRenderer()
-        {            
+        {
+            Points = new List<System.Drawing.Point>();
         }
         public int[] Histogram { get { return m_Histogram; } }
+        public List<System.Drawing.Point> Points { get; private set; }
         public void Init(int w, int h, OpenTK.Graphics.IGraphicsContext context)
         {
             Width = w;
@@ -90,8 +92,7 @@ namespace SplatterPlots
         {
             int kw = (int)(Math.Ceiling(sigma * 3));
             blurProgram.Bind();
-
-
+            
             float[] vec = { 1.0f, 0.0f };
             SetShaderUniforms(kw, sigma, vec);
 
@@ -100,6 +101,17 @@ namespace SplatterPlots
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, textureHandle0);
+            Points.Clear();
+            GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat.Red, PixelType.Float, BlurData);
+            for (int i = 0; i < BlurData.Length; i++)
+            {
+                if (BlurData[i] > 0)
+                {
+                    int y = i / Height;
+                    int x = i % Height;
+                    Points.Add(new System.Drawing.Point(x, y));
+                }
+            }
 
             GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);

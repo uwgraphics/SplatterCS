@@ -113,11 +113,44 @@ namespace SplatterPlots
         {
             return m_Rows.Where(row => row.Selected).Select(row=>row.DataRow);
         }
+        public class Item
+        {
+            public int Id { get; set; }
+            public double Price { get; set; }
+            public string Genre { get; set; }
+        }
+
+        public class Book : Item
+        {
+            public string Author { get; set; }
+        }
+
+        public class Movie : Item
+        {
+            public string Director { get; set; }
+        }
+        public DataTable getXYValuesTable(string ColumnXName, string ColumnYName)
+        {
+            var table = new DataTable();
+            table.Columns.Add("X", typeof(float));
+            table.Columns.Add("Y", typeof(float));
+            var query = from row in m_Rows
+                        orderby row[ColumnXName], row[ColumnYName]
+                        select new { X = row[ColumnXName], Y = row[ColumnYName] };
+            foreach (var item in query)
+            {
+                table.Rows.Add(item.X,item.Y);                
+            }
+            table.PrimaryKey = new DataColumn[] { table.Columns["X"], table.Columns["Y"] };
+            return table;
+        }
         public List<ProjectedPoint> getXYValues(string ColumnXName, string ColumnYName)
         {
             var query = from row in m_Rows
+                        orderby row[ColumnXName], row[ColumnYName]
                         select new ProjectedPoint(row,(row[ColumnXName]), (row[ColumnYName]));
             return new List<ProjectedPoint>(query);
+            
         }
         
         #endregion

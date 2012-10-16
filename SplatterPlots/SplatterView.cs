@@ -59,6 +59,7 @@ namespace SplatterPlots
         ShaderProgram blendProgram;
         ShaderProgram glyphProgram;
         Dictionary<string, DensityRenderer> densityMap = new Dictionary<string, DensityRenderer>();
+        Dictionary<string, VBO> vboMap = new Dictionary<string, VBO>();
 
         bool fade;
         bool contours=true;
@@ -156,7 +157,7 @@ namespace SplatterPlots
             panEnabled = false;
             selectEnabled = false;
             fade = true;
-            this.MouseWheel += new MouseEventHandler(SplatterView_MouseWheel);
+            this.MouseWheel += new MouseEventHandler(SplatterView_MouseWheel);                
         }
         #endregion
 
@@ -195,6 +196,7 @@ namespace SplatterPlots
             screenOffsetY = Height / 2;
             splatPM = spm;
             densityMap.Clear();
+            ClearVBOs();
             if (densityMap.Count <= 0)
             {
                 foreach (var series in splatPM.seriesList.Values)
@@ -209,12 +211,42 @@ namespace SplatterPlots
                 {
                     denisty.Init(Width, Height,Context);
                 }
+                InitVBO();
+
+                GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+                
+
+
             }
             setBBox(spm.xmin, spm.ymin, spm.xmax, spm.ymax);
             if (ModelChanged!=null)
             {
                 ModelChanged(this, EventArgs.Empty);
             }
+        }
+
+        private void InitVBO()
+        {
+            foreach (var series in splatPM.seriesList.Values)
+            {
+                int vbo;
+                var vertices = series.dataPoints.Select(p => new Vector2(p.X, p.Y)).ToArray();
+                GL.GenBuffers(1, out vbo);
+                GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+                GL.BufferData<Vector2>(BufferTarget.ArrayBuffer,
+                                       new IntPtr(vertices.Length * Vector2.SizeInBytes),
+                                       vertices, BufferUsageHint.StaticDraw);
+                vboMap[series.name] = new VBO(vbo, vertices.Length);
+            }
+        }
+
+        private void ClearVBOs()
+        {
+            foreach (var vbo in vboMap.Values)
+            {                
+                GL.DeleteBuffers(1, ref vbo.vbo);
+            }
+            vboMap.Clear();
         }
         #endregion
 
@@ -232,14 +264,13 @@ namespace SplatterPlots
                 if (Model != null && Model.seriesList.Count > 0)
                 {
                     var log =   new Stat(this, duration.Milliseconds, Model.seriesList.Count,
-                                Model.seriesList.Values.Sum(sl => sl.dataPoints.Count));
+                                Model.seriesList.Values.Sum(sl => sl.dataPoints.Length));
                     Logger.Log(log);
                 }
             }
             catch (Exception ex)
             {
                 int g = 0;
-
             }
         }
         private void SplatterView_Load(object sender, EventArgs e)
@@ -259,8 +290,7 @@ namespace SplatterPlots
             GL.PixelStore(PixelStoreParameter.UnpackAlignment, 1);
 
             string nam = this.Name;
-            blendProgram = new ShaderProgram("blur.vert", "blend.frag",Context);
-            //blendProgram.->setParent(this);                
+            blendProgram = new ShaderProgram("blur.vert", "blend.frag",Context);            
             blendProgram.Link();
 
             blendProgram.Bind();
@@ -274,16 +304,14 @@ namespace SplatterPlots
             blendProgram.SetUniform("u_Texture7", 7);
             blendProgram.Release();
 
-            //glyphProgram = new ShaderProgram(this->context());	
-            //glyphProgram->setParent(this);
-            //glyphProgram->addShaderFromSourceFile(QGLShader::Vertex,"glyph.vert");
-            //glyphProgram->addShaderFromSourceFile(QGLShader::Fragment,"glyph.frag");
-            //glyphProgram->link();	
+            //glyphProgram = new ShaderProgram("blur.vert","glyph.frag",Context);
+            //glyphProgram.Link();	
 
             foreach (var denisty in densityMap.Values)
             {
                 denisty.Init(Width, Height,Context);
             }
+            InitVBO();
         }
         private void SplatterView_Resize(object sender, EventArgs e)
         {
@@ -557,19 +585,14 @@ namespace SplatterPlots
             setZoomPan();
 
             GL.EnableVertexAttribArray(0);
-            var vertices = series.dataPoints.Select(p => new Vector2(p.X, p.Y)).ToArray();
-            int vbo;
-            GL.GenBuffers(1, out vbo);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-            GL.BufferData<Vector2>(BufferTarget.ArrayBuffer,
-                                   new IntPtr(vertices.Length * Vector2.SizeInBytes),
-                                   vertices, BufferUsageHint.StaticDraw);
-
+            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboMap[series.name].vbo);
+            
             GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, 0, 0);
 
             
             GL.PointSize(1);
-            GL.Color4(1.0f, 0, 0,1.0f);
+            GL.Color4(1.0f, 1.0, 1.0,1.0f);
             //GL.Begin(BeginMode.Points);
             //foreach (var point in series.dataPoints)
             //{
@@ -577,9 +600,9 @@ namespace SplatterPlots
             //}
 
             //GL.End();
-            GL.DrawArrays(BeginMode.Points, 0, vertices.Length);            
+            GL.DrawArrays(BeginMode.Points, 0, vboMap[series.name].length);            
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.DeleteBuffers(1, ref vbo);
+            //GL.DeleteBuffers(1, ref vboMap[series.name].vbo);
             GL.DisableVertexAttribArray(0); ;
             GL.PopAttrib();
             GL.PopMatrix();
@@ -726,60 +749,101 @@ namespace SplatterPlots
         }
         void drawPoints(SeriesProjection series)
         {            
-            GL.Enable(EnableCap.DepthTest);
-            GL.DepthFunc(DepthFunction.Lequal);
+            //GL.Enable(EnableCap.DepthTest);
+            //GL.DepthFunc(DepthFunction.Lequal);
             //GL.Enable(EnableCap.PointSmooth);
-            double range = Math.Max(series.xmax - series.xmin, series.ymax - series.ymin);
+            float range = Math.Max(series.xmax - series.xmin, series.ymax - series.ymin);
 
             DensityRenderer renderer = densityMap[series.name];
 
             int num = (int)(Math.Ceiling(Width / m_clutterWindow));
             num = Math.Max(num, 1);
-
-            int[] grid_1 = new int[(num - 1) * (num - 1)];
+            
             int[] grid = new int[num * num];
+            int[] grid1 = new int[num * num];
 
-            double cellsize = range / num;
+            float cellsize = range / num;
 
             float offx = transformX(0) - (float)(Math.Floor(transformX(0) / m_clutterWindow) * m_clutterWindow);
             float offy = transformY(0) - (float)(Math.Floor(transformY(0) / m_clutterWindow) * m_clutterWindow);
 
-            var allowedList = new List<ProjectedPoint>();
-            for (int i = 0; i < series.dataPoints.Count; i++)
+            var allowedList = new List<ProjectedPoint>(grid.Length);
+            var allowedList1 = new List<ProjectedPoint>(grid.Length);
+
+
+
+            for (int i = 0; i < densityMap[series.name].Points.Count; i++)
             {
-                float xgl = transformX(series.dataPoints[i].X);
-                float ygl = transformY(series.dataPoints[i].Y);
-                int ix = (int)Math.Floor((xgl - offx) / m_clutterWindow);
-                int iy = (int)Math.Floor((ygl - offy) / m_clutterWindow);
+                var p = densityMap[series.name].Points[i];
+
+                int ix = (int)Math.Floor((p.X - offx) / m_clutterWindow);
+                int iy = (int)Math.Floor((p.Y - offy) / m_clutterWindow);
                 bool allow = !(ix < 0 || ix >= num || iy < 0 || iy >= num);
 
                 if (allow)
                 {
-                    int count = grid[ix * num + iy]++;
+                    int count = grid1[ix * num + iy]++;
                     allow = allow && count == 0;
                 }
+                
 
-                float clutterRad = renderer.GetDist(xgl, ygl) * 2.0f;
+                //var start3 = DateTime.Now;
+                //float clutterRad = renderer.GetDist(xgl, ygl) * 2.0f;
 
-                if (/*splatPM->showAllPoints ||*/clutterRad > m_clutterWindow && allow)
-                //if (allow)
+                //if (clutterRad > m_clutterWindow && allow)
+                if (allow)
                 {
-                    allowedList.Add(series.dataPoints[i]);
+                    allowedList1.Add(new ProjectedPoint(null,p.X,p.Y));
                 }
+                //total3 += (DateTime.Now - start3).Ticks;
+
+
             }
 
 
-            //use vbo???//////////////////////////////////////////////
-            GL.EnableVertexAttribArray(0);
-            var vertices = allowedList.Select(p => new Vector3(p.X, p.Y, p.Z)).ToArray();
-            int vbo;
-            GL.GenBuffers(1, out vbo);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-            GL.BufferData<Vector3>(BufferTarget.ArrayBuffer,
-                                   new IntPtr(vertices.Length * Vector3.SizeInBytes),
-                                   vertices, BufferUsageHint.StaticDraw);
+            //for (int i = 0; i < series.dataPoints.Length; i++)
+            //{
+                
+            //    float xgl = transformX(series.dataPoints[i].X); 
+            //    float ygl = transformY(series.dataPoints[i].Y);
+            //    int ix = (int)Math.Floor((xgl - offx) / m_clutterWindow);
+            //    int iy = (int)Math.Floor((ygl - offy) / m_clutterWindow);
+            //    bool allow = !(ix < 0 || ix >= num || iy < 0 || iy >= num);
+                
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
+                
+                
+            //    if (allow)
+            //    {
+            //        int count = grid[ix * num + iy]++;
+            //        allow = allow && count == 0;
+            //    }
+            //    //
+
+            //    //var start3 = DateTime.Now;
+            //    //float clutterRad = renderer.GetDist(xgl, ygl) * 2.0f;
+
+            //    //if (clutterRad > m_clutterWindow && allow)
+            //    if (allow)
+            //    {
+            //        allowedList.Add(series.dataPoints[i]);
+            //    }
+            //    //total3 += (DateTime.Now - start3).Ticks;
+
+                
+            //}
+
+            //use vbo???//////////////////////////////////////////////
+            //GL.EnableVertexAttribArray(0);
+            //var vertices = allowedList.Select(p => new Vector3(p.X, p.Y, p.Z)).ToArray();
+            //int vbo;
+            //GL.GenBuffers(1, out vbo);
+            //GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
+            //GL.BufferData<Vector3>(BufferTarget.ArrayBuffer,
+            //                       new IntPtr(vertices.Length * Vector3.SizeInBytes),
+            //                       vertices, BufferUsageHint.StaticDraw);
+
+            //GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
 
             /*Color modulated = ColorConv.Modulate(series.color, .9f);
             GL.PointSize(7);
@@ -799,18 +863,26 @@ namespace SplatterPlots
                 }
             });
             GL.End();*/
+
+            GL.PushMatrix();
+            GL.LoadMatrix(ref Matrix4.Identity);
+            GL.PointSize(8);
+            GL.Color3(Color.Blue);
+            GL.Begin(BeginMode.Points);
+            allowedList1.ForEach(p => GL.Vertex3(p.X, p.Y, p.Z));
+            GL.End();
+            GL.PopMatrix();
+
             GL.PointSize(5);
             GL.Color3(series.color);
-            //GL.Begin(BeginMode.Points);
-            //allowedList.ForEach(p => GL.Vertex3(p.X, p.Y, p.Z));
-            //GL.End();
-            GL.DrawArrays(BeginMode.Points, 0, vertices.Length);
-            GL.DepthFunc(DepthFunction.Less);
+            GL.Begin(BeginMode.Points);
+            allowedList.ForEach(p => GL.Vertex3(p.X, p.Y, p.Z));
+            GL.End();
+            //GL.DrawArrays(BeginMode.Points, 0, vertices.Length);
+            //GL.DepthFunc(DepthFunction.Less);
             GL.Disable(EnableCap.DepthTest);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.DeleteBuffers(1, ref vbo);
-            GL.DisableVertexAttribArray(0);
-            //glyphProgram->release();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);            
+            //GL.DisableVertexAttribArray(0);            
         }
         #endregion
 
@@ -840,6 +912,16 @@ namespace SplatterPlots
         //}        
         #endregion
         #endregion
+    }
+    public class VBO
+    {
+        public int vbo;
+        public int length;
+        public VBO( int v, int num)
+        {
+            length = num;
+            vbo = v;
+        }
     }
     public enum MaxMode
     {
