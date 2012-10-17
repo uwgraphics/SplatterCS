@@ -20,8 +20,8 @@ namespace SplatterPlots
             dim0 = d0;
             dim1 = d1;
             //data.setIndeces(dim0, dim1);            
-            dataPoints = data.getXYValues(dim0, dim1).ToArray();
-            for (int i = 0; i < dataPoints.Length; i++)
+            dataPoints = data.getXYValues(dim0, dim1).ToList();
+            for (int i = 0; i < dataPoints.Count; i++)
             {
                 dataPoints[i].Index = i;
             }
@@ -29,7 +29,7 @@ namespace SplatterPlots
         public bool enabled { get; set; }
         public int[] Histogram { get; set; }
 
-        public ProjectedPoint[] dataPoints { get; private set; }
+        public List<ProjectedPoint> dataPoints { get; private set; }
         public Color color { get { return m_Data.Color; } }
         public string name { get; private set; }
 
@@ -73,7 +73,7 @@ namespace SplatterPlots
         {
             foreach (var series in seriesList.Values)
             {
-                //series.dataPoints.ForEach(p => p.Selected = IsSelected(p, xmin, ymin, xmax, ymax));
+                series.dataPoints.ForEach(p => p.Selected = IsSelected(p, xmin, ymin, xmax, ymax));
             }
         }
         public void SetEnabled(string group, bool value)

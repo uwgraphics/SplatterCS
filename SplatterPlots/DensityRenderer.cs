@@ -114,7 +114,7 @@ namespace SplatterPlots
             {
                 if (ColorData[i] != 0)
                 {
-                    int val = (int)(ColorData[i]*series.dataPoints.Length);
+                    int val = (int)(ColorData[i]*series.dataPoints.Count);
                     //int y = i / Height;
                     //int x = i % Height;
                     //Points.Add(new System.Drawing.Point(x, y));

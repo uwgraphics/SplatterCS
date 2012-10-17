@@ -249,7 +249,7 @@ namespace SplatterPlots
             {
                 int vbo;
                 //var vertices = series.dataPoints.Select(p => new Vector2(p.X, p.Y)).ToArray();
-                var vertices = series.dataPoints.Select(p => new Vertex(p,series.dataPoints.Length)).ToArray();
+                var vertices = series.dataPoints.Select(p => new Vertex(p,series.dataPoints.Count)).ToArray();
                 GL.GenBuffers(1, out vbo);
                 GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
                 GL.BufferData(BufferTarget.ArrayBuffer,
@@ -283,7 +283,7 @@ namespace SplatterPlots
                 if (Model != null && Model.seriesList.Count > 0)
                 {
                     var log =   new Stat(this, duration.Milliseconds, Model.seriesList.Count,
-                                Model.seriesList.Values.Sum(sl => sl.dataPoints.Length));
+                                Model.seriesList.Values.Sum(sl => sl.dataPoints.Count));
                     Logger.Log(log);
                 }
             }
@@ -791,9 +791,9 @@ namespace SplatterPlots
         }
         void drawPoints(SeriesProjection series)
         {            
-            //GL.Enable(EnableCap.DepthTest);
-            //GL.DepthFunc(DepthFunction.Lequal);
-            //GL.Enable(EnableCap.PointSmooth);
+            GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Lequal);
+            GL.Enable(EnableCap.PointSmooth);
             float range = Math.Max(series.xmax - series.xmin, series.ymax - series.ymin);
 
             DensityRenderer renderer = densityMap[series.name];
@@ -809,14 +809,12 @@ namespace SplatterPlots
             float offx = transformX(0) - (float)(Math.Floor(transformX(0) / m_clutterWindow) * m_clutterWindow);
             float offy = transformY(0) - (float)(Math.Floor(transformY(0) / m_clutterWindow) * m_clutterWindow);
 
-            var allowedList = new List<ProjectedPoint>(grid.Length);
-            var allowedList1 = new List<ProjectedPoint>(grid.Length);
+            var selectedList = new List<int>(grid.Length);
+            var unselectedList = new List<int>(grid.Length);
+            var allList = new List<int>(grid.Length);
 
-
-
-            for (int i = 0; i < densityMap[series.name].Points.Count; i++)
+            foreach (var p in densityMap[series.name].Points)
             {
-                var p = densityMap[series.name].Points[i];
                 float xgl = transformX(p.X);
                 float ygl = transformY(p.Y);
 
@@ -829,104 +827,47 @@ namespace SplatterPlots
                     int count = grid1[ix * num + iy]++;
                     allow = allow && count == 0;
                 }
+                
+                float clutterRad = renderer.GetDist(xgl, ygl) * 2.0f;
 
-
-                //var start3 = DateTime.Now;
-                //float clutterRad = renderer.GetDist(xgl, ygl) * 2.0f;
-
-                //if (clutterRad > m_clutterWindow && allow)
-                if (allow)
+                if (clutterRad > m_clutterWindow && allow)
                 {
-                    allowedList1.Add(new ProjectedPoint(null, p.X, p.Y));
+                    
+                    allList.Add(p.Index);
+                    if (p.Selected)
+                    {
+                        selectedList.Add(p.Index);
+                    }
+                    else
+                    {
+                        unselectedList.Add(p.Index);
+                    }
                 }
-                //total3 += (DateTime.Now - start3).Ticks;
-
-
             }
 
-
-            //for (int i = 0; i < series.dataPoints.Length; i++)
-            //{
-                
-            //    float xgl = transformX(series.dataPoints[i].X); 
-            //    float ygl = transformY(series.dataPoints[i].Y);
-            //    int ix = (int)Math.Floor((xgl - offx) / m_clutterWindow);
-            //    int iy = (int)Math.Floor((ygl - offy) / m_clutterWindow);
-            //    bool allow = !(ix < 0 || ix >= num || iy < 0 || iy >= num);
-                
-
-                
-                
-            //    if (allow)
-            //    {
-            //        int count = grid[ix * num + iy]++;
-            //        allow = allow && count == 0;
-            //    }
-            //    //
-
-            //    //var start3 = DateTime.Now;
-            //    //float clutterRad = renderer.GetDist(xgl, ygl) * 2.0f;
-
-            //    //if (clutterRad > m_clutterWindow && allow)
-            //    if (allow)
-            //    {
-            //        allowedList.Add(series.dataPoints[i]);
-            //    }
-            //    //total3 += (DateTime.Now - start3).Ticks;
-
-                
-            //}
-
             //use vbo???//////////////////////////////////////////////
-            //GL.EnableVertexAttribArray(0);
-            //var vertices = allowedList.Select(p => new Vector3(p.X, p.Y, p.Z)).ToArray();
-            //int vbo;
-            //GL.GenBuffers(1, out vbo);
-            //GL.BindBuffer(BufferTarget.ArrayBuffer, vbo);
-            //GL.BufferData<Vector3>(BufferTarget.ArrayBuffer,
-            //                       new IntPtr(vertices.Length * Vector3.SizeInBytes),
-            //                       vertices, BufferUsageHint.StaticDraw);
+            GL.EnableClientState(ArrayCap.VertexArray);
+            GL.DisableClientState(ArrayCap.ColorArray);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, vboMap[series.name].vbo);
+            GL.VertexPointer(3, VertexPointerType.Float, Vertex.Stride, 0);
 
-            //GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 0, 0);
-
-            /*Color modulated = ColorConv.Modulate(series.color, .9f);
-            GL.PointSize(7);
-            GL.Color3(modulated);
-            GL.Begin(BeginMode.Points);
-            allowedList.ForEach(p =>
-            {
-                if (p.Selected)
-                {
-                    GL.Color3(0.0f,1.0f,0.0f);
-                    GL.Vertex3(p.X, p.Y, p.Z);
-                    GL.Color3(modulated);
-                }
-                else
-                {
-                    GL.Vertex3(p.X, p.Y, p.Z);
-                }
-            });
-            GL.End();*/
-
-            //GL.PushMatrix();
-            //GL.LoadMatrix(ref Matrix4.Identity);
-            GL.PointSize(8);
-            GL.Color3(Color.Blue);
-            GL.Begin(BeginMode.Points);
-            allowedList1.ForEach(p => GL.Vertex3(p.X, p.Y, p.Z));
-            GL.End();
-            //GL.PopMatrix();
-
+            var unselectedVertices = unselectedList.ToArray();
+            var selectedVertices = selectedList.ToArray();
+            var allVertices = allList.ToArray();
             GL.PointSize(5);
+            Color modulated = ColorConv.Modulate(series.color, .9f);
+            GL.Color3(modulated);
+            GL.DrawElements(BeginMode.Points, unselectedVertices.Length, DrawElementsType.UnsignedInt, unselectedVertices);
+            GL.Color3(Color.FromArgb(0,255,0));
+            GL.DrawElements(BeginMode.Points, selectedVertices.Length, DrawElementsType.UnsignedInt, selectedVertices);
+
+            GL.PointSize(3);
             GL.Color3(series.color);
-            GL.Begin(BeginMode.Points);
-            allowedList.ForEach(p => GL.Vertex3(p.X, p.Y, p.Z));
-            GL.End();
-            //GL.DrawArrays(BeginMode.Points, 0, vertices.Length);
-            //GL.DepthFunc(DepthFunction.Less);
+            GL.DrawElements(BeginMode.Points, allVertices.Length, DrawElementsType.UnsignedInt, allVertices);
+            GL.DisableClientState(ArrayCap.VertexArray);            
             GL.Disable(EnableCap.DepthTest);
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);            
-            //GL.DisableVertexAttribArray(0);            
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);            
         }
         #endregion
 
