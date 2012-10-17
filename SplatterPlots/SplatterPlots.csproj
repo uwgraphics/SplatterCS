@@ -232,12 +232,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\RangeTree\RangeTree.csproj">
-      <Project>{B61E448E-8BFE-44EE-BED3-E45B1601E16C}</Project>
-      <Name>RangeTree</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>

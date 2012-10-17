@@ -11,10 +11,10 @@ namespace SplatterPlots
     {        
         public DensityRenderer()
         {
-            Points = new List<System.Drawing.Point>();
+            Points = new List<ProjectedPoint>();
         }
         public int[] Histogram { get { return m_Histogram; } }
-        public List<System.Drawing.Point> Points { get; private set; }
+        public List<ProjectedPoint> Points { get; private set; }
         public void Init(int w, int h, OpenTK.Graphics.IGraphicsContext context)
         {
             Width = w;
@@ -26,6 +26,13 @@ namespace SplatterPlots
             GL.GetInteger(GetPName.DrawBuffer, out temp);
 
             //setup
+            GL.GenTextures(1, out textureColor);
+            GL.BindTexture(TextureTarget.Texture2D, textureColor);
+            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R32f, Width, Height, 0, PixelFormat.Red, PixelType.Float, IntPtr.Zero);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMinFilter.Linear);
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+
             GL.GenTextures(1, out textureHandle0);
             GL.BindTexture(TextureTarget.Texture2D, textureHandle0);
             GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.R32f, Width, Height, 0, PixelFormat.Red, PixelType.Float, IntPtr.Zero);
@@ -86,7 +93,35 @@ namespace SplatterPlots
             JFA.Link();
 
             BlurData = new float[Width * Height];
+            ColorData = new float[Width * Height];
             DistData = new float[Width * Height];
+        }
+        public void Filter(Action<SeriesProjection,bool> paintPoints,SeriesProjection series)
+        {
+            GL.BindTexture(TextureTarget.Texture2D, 0);
+            GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, textureColor, 0);
+
+            paintPoints(series, true);
+
+            //GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, 0, 0);
+
+            GL.ActiveTexture(TextureUnit.Texture0);
+            GL.BindTexture(TextureTarget.Texture2D, textureColor);  
+
+            Points.Clear();
+            GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat.Red, PixelType.Float, ColorData);
+            for (int i = 0; i < ColorData.Length; i++)
+            {
+                if (ColorData[i] != 0)
+                {
+                    int val = (int)(ColorData[i]*series.dataPoints.Length);
+                    //int y = i / Height;
+                    //int x = i % Height;
+                    //Points.Add(new System.Drawing.Point(x, y));
+                    Points.Add(series.dataPoints[val]);
+                }
+            }
+
         }
         public void Blur(float sigma)
         {
@@ -100,18 +135,7 @@ namespace SplatterPlots
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, textureHandle1, 0);
 
             GL.ActiveTexture(TextureUnit.Texture0);
-            GL.BindTexture(TextureTarget.Texture2D, textureHandle0);
-            Points.Clear();
-            GL.GetTexImage(TextureTarget.Texture2D, 0, PixelFormat.Red, PixelType.Float, BlurData);
-            for (int i = 0; i < BlurData.Length; i++)
-            {
-                if (BlurData[i] > 0)
-                {
-                    int y = i / Height;
-                    int x = i % Height;
-                    Points.Add(new System.Drawing.Point(x, y));
-                }
-            }
+            GL.BindTexture(TextureTarget.Texture2D, textureHandle0);           
 
             GL.ClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -346,6 +370,7 @@ namespace SplatterPlots
         int textureHandle0;
         int textureHandle1;
         int textureHandleRGB;
+        int textureColor;
         int textureDist0;
         int textureDist1;
 		
@@ -353,6 +378,7 @@ namespace SplatterPlots
         int Height;
         float[] BlurData;
         float[] DistData;
+        float[] ColorData;
         int[] m_Histogram = new int[100];
         float maxVal;
         ShaderProgram blurProgram;

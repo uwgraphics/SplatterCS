@@ -20,11 +20,12 @@ namespace SplatterPlots
             dim0 = d0;
             dim1 = d1;
             //data.setIndeces(dim0, dim1);            
-            dataTable = data.getXYValuesTable(dim0,dim1);
-            dataPoints = data.getXYValues(dim0, dim1).ToArray();            
+            dataPoints = data.getXYValues(dim0, dim1).ToArray();
+            for (int i = 0; i < dataPoints.Length; i++)
+            {
+                dataPoints[i].Index = i;
+            }
         }
-
-        public DataTable dataTable { get; set; }
         public bool enabled { get; set; }
         public int[] Histogram { get; set; }
 

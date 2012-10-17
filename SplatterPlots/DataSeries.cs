@@ -23,6 +23,7 @@ namespace SplatterPlots
         public float X { get; private set; }
         public float Y { get; private set; }
         public float Z { get; private set; }
+        public int  Index { get; set; }
         public bool Selected { get { return m_Row.Selected; } set { m_Row.Selected = value; } }
     }
     public class ColumnData
@@ -129,25 +130,11 @@ namespace SplatterPlots
         {
             public string Director { get; set; }
         }
-        public DataTable getXYValuesTable(string ColumnXName, string ColumnYName)
-        {
-            var table = new DataTable();
-            table.Columns.Add("X", typeof(float));
-            table.Columns.Add("Y", typeof(float));
-            var query = from row in m_Rows
-                        orderby row[ColumnXName], row[ColumnYName]
-                        select new { X = row[ColumnXName], Y = row[ColumnYName] };
-            foreach (var item in query)
-            {
-                table.Rows.Add(item.X,item.Y);                
-            }
-            table.PrimaryKey = new DataColumn[] { table.Columns["X"], table.Columns["Y"] };
-            return table;
-        }
+
         public List<ProjectedPoint> getXYValues(string ColumnXName, string ColumnYName)
         {
             var query = from row in m_Rows
-                        orderby row[ColumnXName], row[ColumnYName]
+                        //orderby row[ColumnXName], row[ColumnYName]
                         select new ProjectedPoint(row,(row[ColumnXName]), (row[ColumnYName]));
             return new List<ProjectedPoint>(query);
             
