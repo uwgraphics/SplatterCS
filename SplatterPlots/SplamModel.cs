@@ -19,7 +19,7 @@ namespace SplatterPlots
             Iindex = new List<int>();
             Jindex = new List<int>();
             numDim = datas.First().ColumnNames.Count;
-            numDim = Math.Min(numDim, 10);
+            //numDim = Math.Min(numDim, 10);
             dimNames = datas.First().ColumnNames;
 
 

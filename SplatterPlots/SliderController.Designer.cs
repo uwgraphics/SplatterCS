@@ -65,6 +65,9 @@
             this.buttonKDE = new System.Windows.Forms.Button();
             this.radioButtonGlobal = new System.Windows.Forms.RadioButton();
             this.radioButtonRelative = new System.Windows.Forms.RadioButton();
+            this.checkBoxGrid = new System.Windows.Forms.CheckBox();
+            this.buttonScatter = new System.Windows.Forms.Button();
+            this.buttonScreenShot = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarYScaling)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarBandwith)).BeginInit();
@@ -140,9 +143,9 @@
             this.labelYScaling.AutoSize = true;
             this.labelYScaling.Location = new System.Drawing.Point(383, 405);
             this.labelYScaling.Name = "labelYScaling";
-            this.labelYScaling.Size = new System.Drawing.Size(41, 13);
+            this.labelYScaling.Size = new System.Drawing.Size(13, 13);
             this.labelYScaling.TabIndex = 29;
-            this.labelYScaling.Text = "label21";
+            this.labelYScaling.Text = "0";
             // 
             // trackBarYScaling
             // 
@@ -161,9 +164,9 @@
             this.labelXScaling.AutoSize = true;
             this.labelXScaling.Location = new System.Drawing.Point(383, 360);
             this.labelXScaling.Name = "labelXScaling";
-            this.labelXScaling.Size = new System.Drawing.Size(41, 13);
+            this.labelXScaling.Size = new System.Drawing.Size(13, 13);
             this.labelXScaling.TabIndex = 27;
-            this.labelXScaling.Text = "label19";
+            this.labelXScaling.Text = "0";
             // 
             // labelStripePeriod
             // 
@@ -392,7 +395,6 @@
             this.trackBarClutterRad.Location = new System.Drawing.Point(100, 225);
             this.trackBarClutterRad.Margin = new System.Windows.Forms.Padding(0);
             this.trackBarClutterRad.Maximum = 150;
-            this.trackBarClutterRad.Minimum = 1;
             this.trackBarClutterRad.Name = "trackBarClutterRad";
             this.trackBarClutterRad.Size = new System.Drawing.Size(280, 45);
             this.trackBarClutterRad.TabIndex = 14;
@@ -454,18 +456,21 @@
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(450, 486);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(450, 513);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // flowLayoutPanel2
             // 
             this.flowLayoutPanel2.Controls.Add(this.buttonSplatter);
             this.flowLayoutPanel2.Controls.Add(this.buttonKDE);
+            this.flowLayoutPanel2.Controls.Add(this.buttonScatter);
+            this.flowLayoutPanel2.Controls.Add(this.buttonScreenShot);
             this.flowLayoutPanel2.Controls.Add(this.radioButtonGlobal);
             this.flowLayoutPanel2.Controls.Add(this.radioButtonRelative);
+            this.flowLayoutPanel2.Controls.Add(this.checkBoxGrid);
             this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 453);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(447, 31);
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(325, 51);
             this.flowLayoutPanel2.TabIndex = 3;
             // 
             // buttonSplatter
@@ -492,7 +497,7 @@
             // 
             this.radioButtonGlobal.AutoSize = true;
             this.radioButtonGlobal.Checked = true;
-            this.radioButtonGlobal.Location = new System.Drawing.Point(165, 3);
+            this.radioButtonGlobal.Location = new System.Drawing.Point(3, 32);
             this.radioButtonGlobal.Name = "radioButtonGlobal";
             this.radioButtonGlobal.Size = new System.Drawing.Size(100, 17);
             this.radioButtonGlobal.TabIndex = 2;
@@ -504,22 +509,56 @@
             // radioButtonRelative
             // 
             this.radioButtonRelative.AutoSize = true;
-            this.radioButtonRelative.Location = new System.Drawing.Point(271, 3);
+            this.radioButtonRelative.Location = new System.Drawing.Point(109, 32);
             this.radioButtonRelative.Name = "radioButtonRelative";
             this.radioButtonRelative.Size = new System.Drawing.Size(118, 17);
             this.radioButtonRelative.TabIndex = 3;
             this.radioButtonRelative.Text = "Use Per Group Max";
             this.radioButtonRelative.UseVisualStyleBackColor = true;
             // 
+            // checkBoxGrid
+            // 
+            this.checkBoxGrid.AutoSize = true;
+            this.checkBoxGrid.Checked = true;
+            this.checkBoxGrid.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxGrid.Location = new System.Drawing.Point(233, 32);
+            this.checkBoxGrid.Name = "checkBoxGrid";
+            this.checkBoxGrid.Size = new System.Drawing.Size(75, 17);
+            this.checkBoxGrid.TabIndex = 4;
+            this.checkBoxGrid.Text = "Show Grid";
+            this.checkBoxGrid.UseVisualStyleBackColor = true;
+            this.checkBoxGrid.CheckedChanged += new System.EventHandler(this.checkBoxGrid_CheckedChanged);
+            // 
+            // buttonScatter
+            // 
+            this.buttonScatter.Location = new System.Drawing.Point(165, 3);
+            this.buttonScatter.Name = "buttonScatter";
+            this.buttonScatter.Size = new System.Drawing.Size(75, 23);
+            this.buttonScatter.TabIndex = 5;
+            this.buttonScatter.Text = "Scatter";
+            this.buttonScatter.UseVisualStyleBackColor = true;
+            this.buttonScatter.Click += new System.EventHandler(this.buttonScatter_Click);
+            // 
+            // buttonScreenShot
+            // 
+            this.buttonScreenShot.Location = new System.Drawing.Point(246, 3);
+            this.buttonScreenShot.Name = "buttonScreenShot";
+            this.buttonScreenShot.Size = new System.Drawing.Size(75, 23);
+            this.buttonScreenShot.TabIndex = 6;
+            this.buttonScreenShot.Text = "Screen Shot";
+            this.buttonScreenShot.UseVisualStyleBackColor = true;
+            this.buttonScreenShot.Click += new System.EventHandler(this.buttonScreenShot_Click);
+            // 
             // SliderController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.Controls.Add(this.flowLayoutPanel1);
             this.MaximumSize = new System.Drawing.Size(1000, 650);
             this.MinimumSize = new System.Drawing.Size(250, 450);
             this.Name = "SliderController";
-            this.Size = new System.Drawing.Size(449, 487);
+            this.Size = new System.Drawing.Size(453, 516);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarYScaling)).EndInit();
@@ -578,5 +617,8 @@
         private System.Windows.Forms.Button buttonKDE;
         private System.Windows.Forms.RadioButton radioButtonGlobal;
         private System.Windows.Forms.RadioButton radioButtonRelative;
+        private System.Windows.Forms.Button buttonScatter;
+        private System.Windows.Forms.CheckBox checkBoxGrid;
+        private System.Windows.Forms.Button buttonScreenShot;
     }
 }

@@ -53,6 +53,10 @@ namespace SplatterPlots
             foreach (var line in lines)
             {
                 var array = line.Split(new char[] { ',', '\t'}, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < array.Length; i++)
+                {
+                    array[i] = array[i].Trim();
+                }
                 m_table.Rows.Add(array);
                 if (firstNumericLine)
                 {
@@ -115,7 +119,7 @@ namespace SplatterPlots
             schema.GroupBy = groupBy;
             var groups = ConvertToDataSeries(schema);
             var ordered = groups.OrderByDescending(g => g.Rows.Count).ToList();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < Math.Min(10,groups.Count); i++)
             {
                 var temp = new List<DataSeries>();
                 temp.Add(ordered[i]);
@@ -131,22 +135,22 @@ namespace SplatterPlots
                 temp.Add(Others);
                 res.Add(temp);
             }
-            for (int i = 10; i < groups.Count; i++)
-            {
-                var temp = new List<DataSeries>();
-                temp.Add(groups[i]);
-                DataSeries Others = new DataSeries(this, schema, Name + ".Others");
-                for (int j = 0; j < groups.Count; j++)
-                {
-                    if (i != j)
-                    {
-                        groups[j].Rows.ForEach(r => Others.AddRow(r));
-                    }
-                }
-                Others.EndInit();
-                temp.Add(Others);
-                res.Add(temp);
-            }
+            //for (int i = 10; i < groups.Count; i++)
+            //{
+            //    var temp = new List<DataSeries>();
+            //    temp.Add(groups[i]);
+            //    DataSeries Others = new DataSeries(this, schema, Name + ".Others");
+            //    for (int j = 0; j < groups.Count; j++)
+            //    {
+            //        if (i != j)
+            //        {
+            //            groups[j].Rows.ForEach(r => Others.AddRow(r));
+            //        }
+            //    }
+            //    Others.EndInit();
+            //    temp.Add(Others);
+            //    res.Add(temp);
+            //}
             return res;
         }        
         public List<DataSeries> ConvertToDataSeries(DataFileSchema schema)
@@ -166,17 +170,37 @@ namespace SplatterPlots
             {
                 var query =
                     from row in m_table.AsEnumerable()
-                    group row by row[schema.GroupBy];
-
+                    group row by row[schema.GroupBy] into set
+                    orderby set.Count() descending
+                    select set;
+                int max = 10;
+                int index = 0;
+                DataSeries rest = new DataSeries(this, schema, Name + ".Rest");
                 foreach (var group in query)
                 {
-                    DataSeries data = new DataSeries(this, schema, Name + "." + group.Key);
-                    foreach (var row in group)
+                    if (index < max)
                     {
-                        data.AddRow(new DataSeriesRow(schema, row));
+                        DataSeries data = new DataSeries(this, schema, Name + "." + group.Key);
+                        foreach (var row in group)
+                        {
+                            data.AddRow(new DataSeriesRow(schema, row));
+                        }
+                        data.EndInit();
+                        res.Add(data);
                     }
-                    data.EndInit();
-                    res.Add(data);
+                    else
+                    {
+                        foreach (var row in group)
+                        {
+                            rest.AddRow(new DataSeriesRow(schema, row));
+                        }
+                    }
+                    index++;
+                }
+                if (rest.Rows.Count>0)
+                {
+                    rest.EndInit();
+                    res.Add(rest);
                 }
             }
             return res;

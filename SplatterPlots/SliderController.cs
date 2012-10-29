@@ -34,7 +34,21 @@ namespace SplatterPlots
             allowUpdate = true;
             buttonSplatter_Click(this, EventArgs.Empty);
         }
-
+        public void SetAsScatter()
+        {
+            trackBarContourThresh.Value = 100;
+            trackBarDensityThresh.Value = 100;
+            trackBarClutterRad.Value = 0;
+        }
+        public void SetAsSplatter()
+        {
+            trackBarContourThresh.Value = 50;
+            trackBarClutterRad.Value = 35;
+            trackBarDensityThresh.Value = 0;
+            trackBarBandwith.Value = 15;
+            trackBarLightnessF.Value = 90;
+            trackBarStripeWidth.Value = 0;
+        }
         private void trackBarBandwith_ValueChanged(object sender, EventArgs e)
         {
             labelBandwidth.Text = string.Format("{0:G}", trackBarBandwith.Value);
@@ -146,12 +160,8 @@ namespace SplatterPlots
 
         private void buttonSplatter_Click(object sender, EventArgs e)
         {
-            trackBarContourThresh.Value = 70;
-            trackBarClutterRad.Value = 10;
-            trackBarDensityThresh.Value = 100;
-            trackBarBandwith.Value = 12;
-            trackBarLightnessF.Value = 90;
-        }
+            SetAsSplatter();
+        }       
 
         private void buttonKDE_Click(object sender, EventArgs e)
         {
@@ -164,6 +174,23 @@ namespace SplatterPlots
         private void radioButtonGlobal_CheckedChanged(object sender, EventArgs e)
         {
             m_views.ForEach(view => view.MaxMode = radioButtonGlobal.Checked ? MaxMode.Global : MaxMode.PerGroup);
+        }
+
+        private void checkBoxGrid_CheckedChanged(object sender, EventArgs e)
+        {
+            m_views.ForEach(view => view.ShowGrid = checkBoxGrid.Checked);
+        }
+
+        private void buttonScatter_Click(object sender, EventArgs e)
+        {
+            SetAsScatter();
+        }
+
+        
+
+        private void buttonScreenShot_Click(object sender, EventArgs e)
+        {
+            m_views.ForEach(view => view.NumberOfPointsInView());            
         }
     }
 }

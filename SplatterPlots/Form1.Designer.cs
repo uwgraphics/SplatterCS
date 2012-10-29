@@ -37,12 +37,14 @@
             this.buttonRemove = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
             this.button1vsAll = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.buttonSplat = new System.Windows.Forms.Button();
             this.buttonSplam = new System.Windows.Forms.Button();
+            this.buttonClutter = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -136,13 +138,25 @@
             // panel1
             // 
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panel1.Controls.Add(this.buttonClutter);
+            this.panel1.Controls.Add(this.button1);
             this.panel1.Controls.Add(this.button1vsAll);
             this.panel1.Controls.Add(this.buttonAdd);
             this.panel1.Controls.Add(this.buttonRemove);
-            this.panel1.Location = new System.Drawing.Point(202, 102);
+            this.panel1.Location = new System.Drawing.Point(202, 73);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(91, 87);
+            this.panel1.Size = new System.Drawing.Size(91, 145);
             this.panel1.TabIndex = 8;
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(0, 90);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(91, 23);
+            this.button1.TabIndex = 8;
+            this.button1.Text = "Performance Test";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button1vsAll
             // 
@@ -198,6 +212,16 @@
             this.buttonSplam.UseVisualStyleBackColor = true;
             this.buttonSplam.Click += new System.EventHandler(this.buttonSplam_Click);
             // 
+            // buttonClutter
+            // 
+            this.buttonClutter.Location = new System.Drawing.Point(0, 119);
+            this.buttonClutter.Name = "buttonClutter";
+            this.buttonClutter.Size = new System.Drawing.Size(91, 23);
+            this.buttonClutter.TabIndex = 9;
+            this.buttonClutter.Text = "Clutter";
+            this.buttonClutter.UseVisualStyleBackColor = true;
+            this.buttonClutter.Click += new System.EventHandler(this.buttonClutter_click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -238,6 +262,8 @@
         private System.Windows.Forms.Button buttonSplat;
         private System.Windows.Forms.Button buttonSplam;
         private System.Windows.Forms.Button button1vsAll;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonClutter;
 
     }
 }

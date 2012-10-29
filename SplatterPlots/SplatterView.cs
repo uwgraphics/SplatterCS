@@ -11,6 +11,7 @@ using OpenTK.Graphics.OpenGL;
 using QuickFont;
 using System.Runtime.InteropServices;
 
+
 namespace SplatterPlots
 {
     public partial class SplatterView: GLControl
@@ -53,6 +54,7 @@ namespace SplatterPlots
         float m_scaleFactorX;
         float m_scaleFactorY;
         float m_clutterWindow = 100;
+        bool m_ShowGrid = true;
         MaxMode m_MaxMode;
 
         bool dClickable;
@@ -102,8 +104,12 @@ namespace SplatterPlots
         {
             get { return m_densityThreshold; }
             set { m_densityThreshold = Math.Max(value,0.001f); Refresh(); }
-        }       
-
+        }
+        public bool ShowGrid
+        {
+            get { return m_ShowGrid; }
+            set { m_ShowGrid = value; Refresh(); }
+        }
         public MaxMode MaxMode
         {
             get { return m_MaxMode; }
@@ -143,7 +149,7 @@ namespace SplatterPlots
             m_clutterWindow = 30.0f;
             m_bandwidth = 10;
             m_contourThreshold = 1;
-            m_densityThreshold = 0;
+            m_densityThreshold = 1;
             m_stripePeriod = 50;
             m_stripeWidth = 1;
             m_MaxMode = MaxMode.Global;
@@ -234,11 +240,15 @@ namespace SplatterPlots
                 Position.Z = p.Index / count;
                 Color.X = p.Index / count;
                 Color.Y = p.Index / count;
-                Color.Z = p.Index / count;  
+                Color.Z = p.Index / count;
+                Position2.X = p.X;
+                Position2.Y = p.Y;
+                Position2.Z = p.Z;
               
             }
             public Vector3 Position;
             public Vector3 Color;
+            public Vector3 Position2;
 
             public static readonly int Stride = Marshal.SizeOf(default(Vertex));
         }
@@ -276,16 +286,16 @@ namespace SplatterPlots
         {
             try
             {
-                var start = DateTime.Now;
+                //var start = DateTime.Now;
                 glPaint();
-                var stop = DateTime.Now;
+                /*var stop = DateTime.Now;
                 var duration = stop - start;
                 if (Model != null && Model.seriesList.Count > 0)
                 {
                     var log =   new Stat(this, duration.Milliseconds, Model.seriesList.Count,
                                 Model.seriesList.Values.Sum(sl => sl.dataPoints.Count));
                     Logger.Log(log);
-                }
+                }*/
             }
             catch (Exception ex)
             {
@@ -535,7 +545,7 @@ namespace SplatterPlots
             GL.Disable(EnableCap.Blend);
             setZoomPan();
 
-            if (splatPM.showAllPoints)
+            if (splatPM.showAllPoints&&ClutterWindow<150)
             {
                 foreach (var series in splatPM.seriesList.Values)
                 {
@@ -549,7 +559,11 @@ namespace SplatterPlots
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.LoadMatrix(ref Matrix4.Identity);
             drawSelect();
-            drawGrid();            
+            if (ShowGrid)
+            {
+                drawGrid();
+            }
+            
             this.SwapBuffers();
         }
         void drawSelect()
@@ -657,6 +671,49 @@ namespace SplatterPlots
             GL.Scale(totalScaleX, totalScaleY, 1);
             GL.Translate(offsetX, offsetY, 0);
             //glScalef(1, -1, 1);
+        }
+        public void saveScreenShot(string name)
+        {
+            MakeCurrent();
+            
+            //if (OpenTK.Graphics.GraphicsContext.CurrentContext == null)
+                //throw new OpenTK.Graphics.GraphicsContextMissingException();
+
+            Bitmap bmp = new Bitmap(ClientSize.Width, ClientSize.Height);
+            System.Drawing.Imaging.BitmapData data =
+                bmp.LockBits(ClientRectangle, System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            GL.ReadPixels(0, 0, ClientSize.Width, ClientSize.Height, PixelFormat.Bgr, PixelType.UnsignedByte, data.Scan0);
+            bmp.UnlockBits(data);
+            bmp.RotateFlip(RotateFlipType.RotateNoneFlipY);
+            int pointCount = NumberOfPointsInView();
+            bmp.Save(string.Format("{0}_{1}_{2}.png", name, pointCount,Model.seriesList.Count), System.Drawing.Imaging.ImageFormat.Png);
+            //return bmp;
+        
+        }
+        public int NumberOfPointsInView()
+        {
+            float xmin = unTransformX(0);
+            float ymin = unTransformY(0);
+            float xmax = unTransformX(ClientSize.Width);
+            float ymax = unTransformY(ClientSize.Height);
+
+            var count = Model.seriesList.Values.Sum(
+                (s => s.dataPoints.Count(
+                    p => p.X >= xmin && p.X <= xmax &&
+                         p.Y >= ymin && p.Y <= ymax)));
+            return count;
+        }
+        public void ZoomIn()
+        {
+            scaleX *= 1.0f / .9f;
+            scaleY *= 1.0f / .9f;
+            Refresh();
+        }
+        public void ZoomOut()
+        {
+            scaleX *= .9f;
+            scaleY *= .9f;
+            Refresh();
         }
         void drawGrid()
         {
@@ -801,8 +858,7 @@ namespace SplatterPlots
             int num = (int)(Math.Ceiling(Width / m_clutterWindow));
             num = Math.Max(num, 1);
             
-            int[] grid = new int[num * num];
-            int[] grid1 = new int[num * num];
+            int[] grid = new int[num * num];            
 
             float cellsize = range / num;
 
@@ -813,43 +869,50 @@ namespace SplatterPlots
             var unselectedList = new List<int>(grid.Length);
             var allList = new List<int>(grid.Length);
 
-            foreach (var p in densityMap[series.name].Points)
+            if (m_clutterWindow == 0)
             {
-                float xgl = transformX(p.X);
-                float ygl = transformY(p.Y);
-
-                int ix = (int)Math.Floor((xgl - offx) / m_clutterWindow);
-                int iy = (int)Math.Floor((ygl - offy) / m_clutterWindow);
-                bool allow = !(ix < 0 || ix >= num || iy < 0 || iy >= num);
-
-                if (allow)
+                allList.AddRange(series.dataPoints.Select(d=>d.Index));
+                unselectedList.AddRange(series.dataPoints.Select(d => d.Index));
+            }
+            else
+            {
+                foreach (var p in densityMap[series.name].Points)
                 {
-                    int count = grid1[ix * num + iy]++;
-                    allow = allow && count == 0;
-                }
-                
-                float clutterRad = renderer.GetDist(xgl, ygl) * 2.0f;
+                    float xgl = transformX(p.X);
+                    float ygl = transformY(p.Y);
 
-                if (clutterRad > m_clutterWindow && allow)
-                {
-                    
-                    allList.Add(p.Index);
-                    if (p.Selected)
+                    int ix = (int)Math.Floor((xgl - offx) / m_clutterWindow);
+                    int iy = (int)Math.Floor((ygl - offy) / m_clutterWindow);
+                    bool allow = !(ix < 0 || ix >= num || iy < 0 || iy >= num);
+
+                    if (allow)
                     {
-                        selectedList.Add(p.Index);
+                        int count = grid[ix * num + iy]++;
+                        allow = allow && count == 0;
                     }
-                    else
+
+                    float clutterRad = renderer.GetDist(xgl, ygl) * 2.0f;
+
+                    if (clutterRad > m_clutterWindow && allow)
                     {
-                        unselectedList.Add(p.Index);
+
+                        allList.Add(p.Index);
+                        if (p.Selected)
+                        {
+                            selectedList.Add(p.Index);
+                        }
+                        else
+                        {
+                            unselectedList.Add(p.Index);
+                        }
                     }
                 }
             }
-
             //use vbo???//////////////////////////////////////////////
             GL.EnableClientState(ArrayCap.VertexArray);
             GL.DisableClientState(ArrayCap.ColorArray);
             GL.BindBuffer(BufferTarget.ArrayBuffer, vboMap[series.name].vbo);
-            GL.VertexPointer(3, VertexPointerType.Float, Vertex.Stride, 0);
+            GL.VertexPointer(3, VertexPointerType.Float, Vertex.Stride, 2 * Vector3.SizeInBytes);            
 
             var unselectedVertices = unselectedList.ToArray();
             var selectedVertices = selectedList.ToArray();
@@ -934,7 +997,7 @@ namespace SplatterPlots
             GroupNum = groupN;
             ClutterWindow = view.ClutterWindow;
             Width = view.Width;
-            Height = Height;
+            Height = view.Height;
 
         }
     }

@@ -5,6 +5,7 @@ using System.Text;
 using OpenTK;
 using System.Diagnostics;
 using System.Drawing;
+using System.Collections;
 
 namespace SplatterPlots
 {
@@ -166,9 +167,10 @@ namespace SplatterPlots
 
             return LABtoRGB(LCHtoLAB(newLch), true);
         }
-        public static List<Color> pickIsoCols(float L, int num, float angle, float angleOffset)
+        public static List<Vector3> pickIsoColsVec(float L, int num, float angle, float angleOffset)
         {
-            var resultRGB = new List<Color>();
+            //var resultRGB = new List<Color>();
+            var result = new List<Vector3>();
             if (angle < 0)
                 angle = uniform(0.0f, (float)Math.PI * 2.0f);
             while (angle < 0)
@@ -191,10 +193,15 @@ namespace SplatterPlots
                 float b = (float)(C * Math.Sin(H));
 
                 Vector3 rgb = LABtoRGB(new Vector3(L, a, b), true);
-                var color = Color.FromArgb((int)(rgb.X * 255), (int)(rgb.Y * 255), (int)(rgb.Z * 255));
-                resultRGB.Add(color);
+                //var color = Color.FromArgb((int)(rgb.X * 255), (int)(rgb.Y * 255), (int)(rgb.Z * 255));
+                result.Add(rgb);
             }
-            return resultRGB;
+            return result;
+        }
+        public static List<Color> pickIsoCols(float L, int num, float angle, float angleOffset)
+        {
+            var res = pickIsoColsVec(L, num, angle, angleOffset);
+            return res.Select(c => Color.FromArgb((int)(c.X * 255), (int)(c.Y * 255), (int)(c.Z * 255))).ToList();
         }
         public static Color Modulate(Color original, float factor)
         {
@@ -205,9 +212,108 @@ namespace SplatterPlots
             var color = Color.FromArgb((int)(rgb.X * 255), (int)(rgb.Y * 255), (int)(rgb.Z * 255));
             return color;
         }
+        public static float ColorDiff(Vector3 one, Vector3 two)
+        {
+            var lab1 = RGBtoLAB(one);
+            var lab2 = RGBtoLAB(two);
+            return (lab1 - lab2).Length;
+        }
+        public static void DoColorExp()
+        {
+            Logger.ClearColorLog();
+            for (int i = 2; i <= 8; i++)
+            {
+                var info = ExpPart(i);
+                Logger.Log(info);
+            }
+        }
         #endregion
 
         #region private
+        private static ColorInfo ExpPart(int num)
+        {
+            // first need to generate all possible combinations, which eaqual (2^n - 1) i.e the powerset
+            List<List<int>> res = new List<List<int>>();
+            List<Vector3> colors = pickIsoColsVec(74.0f, num, .5f, (float)Math.PI);
+            List<ColorInfo> cinfo = new List<ColorInfo>();
+            
+            for (int i = 0; i < Math.Pow(2,num) -1 ; i++)
+            {
+                var bits = new BitArray(new int[] { i+1 });
+                var subl = new List<int>();
+                for (int j = 0; j < num; j++)
+                {
+                    if (bits[j])
+                    {
+                        subl.Add(j);
+                    }
+                }
+                if (subl.Count>0)
+                {
+
+                    res.Add(subl);
+                }
+            }
+            int numStep = 100;
+            float step = 1.0f / numStep;
+            for (int i = 0; i <= numStep; i++)
+            {
+                for (int j = 0; j <= numStep; j++)
+                {
+                    var colorComp = new List<Vector3>();
+                    foreach (var list in res)
+                    {
+                        var col = PerceptualBlendRGB(list.Select(index => colors[index]).ToList(), i * step, j * step);
+                        colorComp.Add(col);
+                    }
+                    var colorInfo = new ColorInfo(colorComp, i * step, j * step, num);
+                    cinfo.Add(colorInfo);
+                }
+            }
+            cinfo.Sort((x, y) => x.TotalDiff.CompareTo(y.TotalDiff));
+            var info = cinfo.Last();
+            return info;
+        }
+        public class ColorInfo
+        {
+            public float Cf { get; set; }
+            public float Lf { get; set; }
+            public int Num { get; set; }
+            public List<Vector3> ColorList { get; set; }
+            public float[,] DiffMatrix { get; set; }
+            public float TotalDiff { get; private set; }
+            public ColorInfo(List<Vector3> colors,float cf, float lf, int num)
+            {
+                Cf = cf;
+                Lf = lf;
+                Num = num;
+                ColorList = colors;
+                DiffMatrix = new float[ColorList.Count, ColorList.Count];
+                
+                for (int k = 0; k < ColorList.Count; k++)
+                {
+                    for (int l = 0; l < ColorList.Count; l++)
+                    {
+                        float diff = ColorDiff(ColorList[k], ColorList[l]);
+                        DiffMatrix[k, l] = diff;
+                    }
+                }
+                float sum = float.MaxValue;
+                for (int k = 0; k < ColorList.Count; k++)
+                {
+                    for (int l = k+1; l < ColorList.Count; l++)
+                    {
+                        sum = Math.Min(DiffMatrix[k, l],sum);
+                    }
+                }
+                TotalDiff = sum;
+            }
+        }
+        //private static Vector3 ColorFromIndex(List<int> indeces, List<Vector3> colors,float cf, float lf)
+        //{
+        //    var cols = indeces.Select(i => colors[i]);
+            
+        //}
         private static Vector3 clamp(Vector3 col, float minV, float maxV)
         {
             col.X = Math.Min(Math.Max(col.X, minV), maxV);

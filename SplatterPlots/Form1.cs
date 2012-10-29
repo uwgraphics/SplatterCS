@@ -7,6 +7,10 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using OpenTK;
+using System.IO;
+using System.Net.Mail;
+using System.Net;
+using System.Security;
 
 namespace SplatterPlots
 {
@@ -279,6 +283,112 @@ namespace SplatterPlots
                     OneVersusAllDialog.BringToFront();
                 }
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            var dialog = new FolderBrowserDialog();
+            float[] bandwidths = { 1,10,20,30,40,50,60,70,80,90,100,110,120,130,140,150};
+            
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var files = Directory.EnumerateFiles(dialog.SelectedPath, "*.txt");
+                foreach (var file in files)
+                {
+                    var datafile = new DataFile(file);
+                    DataFileSchema schema = new DataFileSchema(datafile);
+                    var splat = new SingleSplatterDialog();
+                    schema.GroupBy = "G";
+                    schema.ColumnNumericMap["G"] = false;
+                    var dslist = datafile.ConvertToDataSeries(schema);
+                    var model = new SplatterModel(dslist, 0, 1);
+                    var colors = ColorConv.pickIsoCols(74.0f, dslist.Count, .5f, (float)Math.PI);
+                    for (int i = 0; i < colors.Count; i++)
+                    {
+                        dslist[i].Color = colors[i];
+                    }
+
+                    splat.SetModel(model);
+                    splat.View.Bandwidth = 1;
+                    splat.Show(this);
+                    splat.BringToFront();
+                    foreach (var band in bandwidths)
+                    {
+                        splat.View.Bandwidth = band;
+
+                        for (int i = 0; i < 100; i++)
+                        {
+                            splat.Refresh();
+                        }
+                    }
+                    splat.Close();
+                    splat.Dispose();
+                }
+            }
+        }
+        private void buttonClutter_click(object sender, EventArgs e)
+        {
+            var dialog = new FolderBrowserDialog();
+            int I = 0;
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var files = Directory.EnumerateFiles(dialog.SelectedPath, "*.txt");
+                foreach (var file in files)
+                {
+                    var datafile = new DataFile(file);
+                    DataFileSchema schema = new DataFileSchema(datafile);
+                    var splat = new SingleSplatterDialog();
+                    schema.GroupBy = "G";
+                    schema.ColumnNumericMap["G"] = false;
+                    var dslist = datafile.ConvertToDataSeries(schema);
+                    var model = new SplatterModel(dslist, 0, 1);
+                    var colors = ColorConv.pickIsoCols(74.0f, dslist.Count, .5f, (float)Math.PI);
+                    for (int i = 0; i < colors.Count; i++)
+                    {
+                        dslist[i].Color = colors[i];
+                    }
+
+                    splat.SetModel(model);
+                    //splat.View.Bandwidth = 1;
+                    splat.View.ShowGrid = false;
+                    splat.View.MaxMode = MaxMode.PerGroup;
+                    splat.Show(this);
+                    splat.BringToFront();
+                    while (splat.View.NumberOfPointsInView() > 100)
+                    {
+                        string name = string.Format("{0:D8}",I++);
+                        splat.Slider.SetAsScatter();
+                        splat.View.Refresh();
+                        splat.View.saveScreenShot("scatter" + name);
+                        splat.Slider.SetAsSplatter();
+                        splat.View.Refresh();
+                        splat.View.saveScreenShot("splatter" + name);
+                        splat.View.ZoomIn();
+                    }
+                    splat.Close();
+                    splat.Dispose();
+                }
+            }
+            //var from = new MailAddress("adr.mayorga@gmail.com");
+            //var to = new MailAddress("adr.mayorga@gmail.com");
+            //string fromPass = "";
+            //string subject = "TestCompleted";
+            //string body = "Test complete at" + System.DateTime.Now;
+
+            //var smtp = new SmtpClient
+            //{
+            //    Host = "smtp.gmail.com",
+            //    Port = 587,
+            //    EnableSsl = true,
+            //    DeliveryMethod = SmtpDeliveryMethod.Network,
+            //    UseDefaultCredentials = false,
+            //    Credentials = new NetworkCredential(from.Address, fromPass)
+            //};
+            //using (var message = new MailMessage(from, to) {Subject = subject, Body = body })
+            //{
+            //    smtp.Send(message);
+            //}
+
         }
     }
 }

@@ -48,6 +48,7 @@ namespace SplatterPlots
             m_Row = row;
             foreach (var col in schema.ColumnNames.Where(c => schema.ColumnNumericMap[c]))
             {
+                //m_Values[col] = (float)Math.Log(Convert.ToSingle(row.Field<string>(col)) + 1, 2);
                 m_Values[col] = Convert.ToSingle(row.Field<string>(col));
             }
             Selected = false;
@@ -104,6 +105,7 @@ namespace SplatterPlots
             foreach (var col in m_Schema.ColumnNames.Where(c => m_Schema.ColumnNumericMap[c]))
             {
                 var query = from row in m_Rows
+                            where !float.IsInfinity(row[col]) && !float.IsNaN(row[col])
                             select row[col];
                 var d = new ColumnData(col, query.Min(), query.Max());
                 ColumnData.Add(col, d);
@@ -113,29 +115,14 @@ namespace SplatterPlots
         public IEnumerable<DataRow> GetSelectedRows()
         {
             return m_Rows.Where(row => row.Selected).Select(row=>row.DataRow);
-        }
-        public class Item
-        {
-            public int Id { get; set; }
-            public double Price { get; set; }
-            public string Genre { get; set; }
-        }
-
-        public class Book : Item
-        {
-            public string Author { get; set; }
-        }
-
-        public class Movie : Item
-        {
-            public string Director { get; set; }
-        }
+        }        
 
         public List<ProjectedPoint> getXYValues(string ColumnXName, string ColumnYName)
         {
             var query = from row in m_Rows
-                        //orderby row[ColumnXName], row[ColumnYName]
-                        select new ProjectedPoint(row,(row[ColumnXName]), (row[ColumnYName]));
+                        //orderby row[ColumnXName], row[ColumnYName]      
+                        //where !(row[ColumnXName]==0 && row[ColumnYName]==0)
+                        select new ProjectedPoint(row, (row[ColumnXName]), (row[ColumnYName]));
             return new List<ProjectedPoint>(query);
             
         }

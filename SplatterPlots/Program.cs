@@ -13,6 +13,7 @@ namespace SplatterPlots
         [STAThread]
         static void Main()
         {
+            //ColorConv.DoColorExp();
             Runtime = true;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
