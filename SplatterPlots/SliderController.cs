@@ -190,7 +190,11 @@ namespace SplatterPlots
 
         private void buttonScreenShot_Click(object sender, EventArgs e)
         {
-            m_views.ForEach(view => view.NumberOfPointsInView());            
+            var dialog = new SaveFileDialog();
+            if (dialog.ShowDialog()== DialogResult.OK)
+            {
+                m_views.ForEach(view => view.saveScreenShot(dialog.FileName));
+            }
         }
     }
 }
