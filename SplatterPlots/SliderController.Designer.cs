@@ -63,11 +63,11 @@
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.buttonSplatter = new System.Windows.Forms.Button();
             this.buttonKDE = new System.Windows.Forms.Button();
+            this.buttonScatter = new System.Windows.Forms.Button();
+            this.buttonScreenShot = new System.Windows.Forms.Button();
             this.radioButtonGlobal = new System.Windows.Forms.RadioButton();
             this.radioButtonRelative = new System.Windows.Forms.RadioButton();
             this.checkBoxGrid = new System.Windows.Forms.CheckBox();
-            this.buttonScatter = new System.Windows.Forms.Button();
-            this.buttonScreenShot = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarYScaling)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarBandwith)).BeginInit();
@@ -456,7 +456,7 @@
             this.flowLayoutPanel1.Controls.Add(this.flowLayoutPanel2);
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(450, 513);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(450, 509);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
             // flowLayoutPanel2
@@ -492,6 +492,26 @@
             this.buttonKDE.Text = "KDE";
             this.buttonKDE.UseVisualStyleBackColor = true;
             this.buttonKDE.Click += new System.EventHandler(this.buttonKDE_Click);
+            // 
+            // buttonScatter
+            // 
+            this.buttonScatter.Location = new System.Drawing.Point(165, 3);
+            this.buttonScatter.Name = "buttonScatter";
+            this.buttonScatter.Size = new System.Drawing.Size(75, 23);
+            this.buttonScatter.TabIndex = 5;
+            this.buttonScatter.Text = "Scatter";
+            this.buttonScatter.UseVisualStyleBackColor = true;
+            this.buttonScatter.Click += new System.EventHandler(this.buttonScatter_Click);
+            // 
+            // buttonScreenShot
+            // 
+            this.buttonScreenShot.Location = new System.Drawing.Point(246, 3);
+            this.buttonScreenShot.Name = "buttonScreenShot";
+            this.buttonScreenShot.Size = new System.Drawing.Size(75, 23);
+            this.buttonScreenShot.TabIndex = 6;
+            this.buttonScreenShot.Text = "Screen Shot";
+            this.buttonScreenShot.UseVisualStyleBackColor = true;
+            this.buttonScreenShot.Click += new System.EventHandler(this.buttonScreenShot_Click);
             // 
             // radioButtonGlobal
             // 
@@ -529,36 +549,15 @@
             this.checkBoxGrid.UseVisualStyleBackColor = true;
             this.checkBoxGrid.CheckedChanged += new System.EventHandler(this.checkBoxGrid_CheckedChanged);
             // 
-            // buttonScatter
-            // 
-            this.buttonScatter.Location = new System.Drawing.Point(165, 3);
-            this.buttonScatter.Name = "buttonScatter";
-            this.buttonScatter.Size = new System.Drawing.Size(75, 23);
-            this.buttonScatter.TabIndex = 5;
-            this.buttonScatter.Text = "Scatter";
-            this.buttonScatter.UseVisualStyleBackColor = true;
-            this.buttonScatter.Click += new System.EventHandler(this.buttonScatter_Click);
-            // 
-            // buttonScreenShot
-            // 
-            this.buttonScreenShot.Location = new System.Drawing.Point(246, 3);
-            this.buttonScreenShot.Name = "buttonScreenShot";
-            this.buttonScreenShot.Size = new System.Drawing.Size(75, 23);
-            this.buttonScreenShot.TabIndex = 6;
-            this.buttonScreenShot.Text = "Screen Shot";
-            this.buttonScreenShot.UseVisualStyleBackColor = true;
-            this.buttonScreenShot.Click += new System.EventHandler(this.buttonScreenShot_Click);
-            // 
             // SliderController
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this.flowLayoutPanel1);
-            this.MaximumSize = new System.Drawing.Size(1000, 650);
             this.MinimumSize = new System.Drawing.Size(250, 450);
             this.Name = "SliderController";
-            this.Size = new System.Drawing.Size(453, 516);
+            this.Size = new System.Drawing.Size(453, 517);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarYScaling)).EndInit();

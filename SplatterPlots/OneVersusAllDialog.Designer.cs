@@ -43,7 +43,7 @@
             // 
             // listView1
             // 
-            this.listView1.Location = new System.Drawing.Point(1018, 505);
+            this.listView1.Location = new System.Drawing.Point(1018, 536);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(524, 228);
             this.listView1.TabIndex = 2;
@@ -59,32 +59,33 @@
             // 
             // sliderController1
             // 
-            this.sliderController1.Location = new System.Drawing.Point(1018, 12);
-            this.sliderController1.MaximumSize = new System.Drawing.Size(1000, 650);
+            this.sliderController1.AutoSize = true;
+            this.sliderController1.Location = new System.Drawing.Point(1050, 12);
             this.sliderController1.MinimumSize = new System.Drawing.Size(250, 450);
             this.sliderController1.Name = "sliderController1";
-            this.sliderController1.Size = new System.Drawing.Size(449, 487);
-            this.sliderController1.TabIndex = 1;
+            this.sliderController1.Size = new System.Drawing.Size(453, 518);
+            this.sliderController1.TabIndex = 3;
             // 
             // OneVersusAllDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1554, 1029);
-            this.Controls.Add(this.listView1);
             this.Controls.Add(this.sliderController1);
+            this.Controls.Add(this.listView1);
             this.Controls.Add(this.panel1);
             this.Name = "OneVersusAllDialog";
             this.Text = "OneVersusAllDialog";
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Panel panel1;
-        private SliderController sliderController1;
+        private System.Windows.Forms.Panel panel1;        
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.ColorDialog colorDialog1;
+        private SliderController sliderController1;
     }
 }

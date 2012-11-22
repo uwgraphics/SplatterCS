@@ -123,7 +123,7 @@ namespace SplatterPlots
             {
                 var temp = new List<DataSeries>();
                 temp.Add(ordered[i]);
-                DataSeries Others = new DataSeries(this, schema, Name + ".Others");
+                DataSeries Others = new DataSeries(this, schema, ".Others");
                 for (int j = 0; j < ordered.Count; j++)
                 {
                     if (i != j)
@@ -175,12 +175,12 @@ namespace SplatterPlots
                     select set;
                 int max = 10;
                 int index = 0;
-                DataSeries rest = new DataSeries(this, schema, Name + ".Rest");
+                DataSeries rest = new DataSeries(this, schema, ".Rest");
                 foreach (var group in query)
                 {
                     if (index < max)
                     {
-                        DataSeries data = new DataSeries(this, schema, Name + "." + group.Key);
+                        DataSeries data = new DataSeries(this, schema, group.Key.ToString());
                         foreach (var row in group)
                         {
                             data.AddRow(new DataSeriesRow(schema, row));

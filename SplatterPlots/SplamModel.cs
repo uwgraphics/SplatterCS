@@ -12,9 +12,11 @@ namespace SplatterPlots
         public List<SplatterModel> SplatList { get; private set; }
         public List<int> Iindex{ get; private set; }
         public List<int> Jindex{ get; private set; }
+        public List<DataSeries> Series { get; private set; }
 
         public SplamModel(List<DataSeries> datas)
         {
+            Series = new List<DataSeries>(datas);
             SplatList = new List<SplatterModel>();
             Iindex = new List<int>();
             Jindex = new List<int>();

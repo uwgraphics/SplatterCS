@@ -13,6 +13,7 @@ namespace SplatterPlots
     {
         SplamModel m_Model;
         List<SplatterView> m_Views = new List<SplatterView>();
+        private Dictionary<ListViewItem, DataSeries> m_Series = new Dictionary<ListViewItem, DataSeries>();
 
         public event EventHandler SplatterSelection;
         public event EventHandler PointSelection;
@@ -56,6 +57,18 @@ namespace SplatterPlots
             }
 
             sliderController1.SetView(m_Views);
+
+            foreach (var series in m_Model.Series)
+            {
+                ListViewItem item = new ListViewItem(series.Name);
+                item.Name = series.Name;
+                item.BackColor = series.Color;
+                if (!listView1.Items.ContainsKey(item.Name))
+                {
+                    m_Series[item] = series;
+                    listView1.Items.Add(item);
+                }
+            }
         }
 
         void view_PointSelection(object sender, EventArgs e)

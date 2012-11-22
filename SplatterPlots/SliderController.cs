@@ -15,8 +15,18 @@ namespace SplatterPlots
         private bool allowUpdate = true;
         public SliderController()
         {
-            InitializeComponent();
+           InitializeComponent();            
         }
+        protected override void OnLoad(EventArgs e)
+        {
+            if (DesignMode)
+            {
+                return;
+            }
+            base.OnLoad(e);
+        }
+
+        
         public void SetView(List<SplatterView> views)
         {
             m_views = views;

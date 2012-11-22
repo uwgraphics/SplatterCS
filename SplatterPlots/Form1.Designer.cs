@@ -37,6 +37,7 @@
             this.buttonRemove = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.buttonClutter = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.button1vsAll = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -44,7 +45,6 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.buttonSplat = new System.Windows.Forms.Button();
             this.buttonSplam = new System.Windows.Forms.Button();
-            this.buttonClutter = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -148,6 +148,16 @@
             this.panel1.Size = new System.Drawing.Size(91, 145);
             this.panel1.TabIndex = 8;
             // 
+            // buttonClutter
+            // 
+            this.buttonClutter.Location = new System.Drawing.Point(0, 119);
+            this.buttonClutter.Name = "buttonClutter";
+            this.buttonClutter.Size = new System.Drawing.Size(91, 23);
+            this.buttonClutter.TabIndex = 9;
+            this.buttonClutter.Text = "Clutter";
+            this.buttonClutter.UseVisualStyleBackColor = true;
+            this.buttonClutter.Click += new System.EventHandler(this.buttonClutter_click);
+            // 
             // button1
             // 
             this.button1.Location = new System.Drawing.Point(0, 90);
@@ -211,16 +221,6 @@
             this.buttonSplam.Text = "Show SPLAM";
             this.buttonSplam.UseVisualStyleBackColor = true;
             this.buttonSplam.Click += new System.EventHandler(this.buttonSplam_Click);
-            // 
-            // buttonClutter
-            // 
-            this.buttonClutter.Location = new System.Drawing.Point(0, 119);
-            this.buttonClutter.Name = "buttonClutter";
-            this.buttonClutter.Size = new System.Drawing.Size(91, 23);
-            this.buttonClutter.TabIndex = 9;
-            this.buttonClutter.Text = "Clutter";
-            this.buttonClutter.UseVisualStyleBackColor = true;
-            this.buttonClutter.Click += new System.EventHandler(this.buttonClutter_click);
             // 
             // Form1
             // 
