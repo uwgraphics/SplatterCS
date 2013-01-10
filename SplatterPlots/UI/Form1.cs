@@ -11,6 +11,7 @@ using System.IO;
 using System.Net.Mail;
 using System.Net;
 using System.Security;
+using System.Diagnostics;
 
 namespace SplatterPlots
 {
@@ -138,8 +139,10 @@ namespace SplatterPlots
             OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog() == DialogResult.OK)
             {
+#if DEBUG
                 try
                 {
+#endif
                     string path = dialog.FileName;                    
                     var dataFile = new DataFile(path);
                     var listViewItem = new ListViewItem(dataFile.Name);
@@ -148,12 +151,16 @@ namespace SplatterPlots
                     {
                         m_Files[listViewItem] = dataFile;
                         listViewDataFiles.Items.Add(listViewItem);
-                    }                    
+                    }
+#if DEBUG
                 }
                 catch (Exception ex)
                 {
-                    int g = 0;
+
+                    MessageBox.Show(ex.Message);
+
                 }
+#endif
             }
         }        
         private void buttonAdd_Click(object sender, EventArgs e)
@@ -369,26 +376,6 @@ namespace SplatterPlots
                     splat.Dispose();
                 }
             }
-            //var from = new MailAddress("adr.mayorga@gmail.com");
-            //var to = new MailAddress("adr.mayorga@gmail.com");
-            //string fromPass = "";
-            //string subject = "TestCompleted";
-            //string body = "Test complete at" + System.DateTime.Now;
-
-            //var smtp = new SmtpClient
-            //{
-            //    Host = "smtp.gmail.com",
-            //    Port = 587,
-            //    EnableSsl = true,
-            //    DeliveryMethod = SmtpDeliveryMethod.Network,
-            //    UseDefaultCredentials = false,
-            //    Credentials = new NetworkCredential(from.Address, fromPass)
-            //};
-            //using (var message = new MailMessage(from, to) {Subject = subject, Body = body })
-            //{
-            //    smtp.Send(message);
-            //}
-
         }
     }
 }

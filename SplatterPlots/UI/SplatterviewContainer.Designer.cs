@@ -29,8 +29,7 @@
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
-            this.verticalLabel1 = new SplatterPlots.VerticalLabel();
+            this.label1 = new System.Windows.Forms.Label();            
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -38,8 +37,7 @@
             // 
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this.verticalLabel1, 0, 0);
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));            
             this.tableLayoutPanel1.Controls.Add(this.label1, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
@@ -58,20 +56,7 @@
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(35, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "label1";
-            // 
-            // verticalLabel1
-            // 
-            this.verticalLabel1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.verticalLabel1.Location = new System.Drawing.Point(2, 15);
-            this.verticalLabel1.Margin = new System.Windows.Forms.Padding(0);
-            this.verticalLabel1.Name = "verticalLabel1";
-            this.verticalLabel1.RenderingMode = System.Drawing.Text.TextRenderingHint.SystemDefault;
-            this.verticalLabel1.Size = new System.Drawing.Size(15, 100);
-            this.verticalLabel1.TabIndex = 0;
-            this.verticalLabel1.Text = "verticalLabel1";
-            this.verticalLabel1.TextDrawMode = SplatterPlots.DrawMode.BottomUp;
-            this.verticalLabel1.TransparentBackground = false;
+            this.label1.Text = "label1";            
             // 
             // SplatterviewContainer
             // 
@@ -89,6 +74,5 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label1;
-        private VerticalLabel verticalLabel1;
     }
 }

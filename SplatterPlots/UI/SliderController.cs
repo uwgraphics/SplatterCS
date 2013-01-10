@@ -15,7 +15,25 @@ namespace SplatterPlots
         private bool allowUpdate = true;
         public SliderController()
         {
-           InitializeComponent();            
+            InitializeComponent();
+            if (Program.Runtime)
+            {
+                tableLayoutPanel2.Visible = false;
+                SetAdvancedLabel();
+            }            
+        }
+
+        private void SetAdvancedLabel()
+        {
+            if (tableLayoutPanel2.Visible)
+            {
+                buttonAdvanced.Text = "Advanced^";
+            }
+            else
+            {
+                buttonAdvanced.Text = "Advanced>>";
+            }
+            
         }
         protected override void OnLoad(EventArgs e)
         {
@@ -205,6 +223,12 @@ namespace SplatterPlots
             {
                 m_views.ForEach(view => view.saveScreenShot(dialog.FileName));
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            tableLayoutPanel2.Visible = !tableLayoutPanel2.Visible;
+            SetAdvancedLabel();
         }
     }
 }

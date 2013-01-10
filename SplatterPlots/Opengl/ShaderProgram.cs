@@ -44,6 +44,7 @@ namespace SplatterPlots
             GL.LinkProgram(ID);
 
             string sInfo = GL.GetProgramInfoLog(ID);
+            System.Diagnostics.Debug.Assert(string.IsNullOrEmpty(sInfo));
         }
         public void Bind()
         {

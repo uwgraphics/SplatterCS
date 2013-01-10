@@ -43,7 +43,7 @@
             // 
             // listView1
             // 
-            this.listView1.Location = new System.Drawing.Point(1018, 536);
+            this.listView1.Location = new System.Drawing.Point(1018, 559);
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(524, 228);
             this.listView1.TabIndex = 2;
@@ -60,10 +60,11 @@
             // sliderController1
             // 
             this.sliderController1.AutoSize = true;
+            this.sliderController1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.sliderController1.Location = new System.Drawing.Point(1050, 12);
             this.sliderController1.MinimumSize = new System.Drawing.Size(250, 450);
             this.sliderController1.Name = "sliderController1";
-            this.sliderController1.Size = new System.Drawing.Size(453, 518);
+            this.sliderController1.Size = new System.Drawing.Size(453, 538);
             this.sliderController1.TabIndex = 3;
             // 
             // OneVersusAllDialog

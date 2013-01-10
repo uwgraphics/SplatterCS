@@ -43,17 +43,6 @@ namespace SplatterPlots
                 view.View.DoubleClick += new EventHandler(view_DoubleClick);
                 view.View.setSplatPM(m_Model.SplatList[i]);
                 panel1.Controls.Add(view);
-
-                //QLabel *label = new QLabel(ui.splomArea);
-                //label->setText(QString::fromStdString(splom->splatList[i]->dim0Name));
-                //label->setAlignment(Qt::Alignment(Qt::AlignmentFlag::AlignHCenter));
-                //label->setGeometry(QRect(I*sz+25, J*sz + (sz-25), sz-25, 20));
-
-                //MyLabel *label2 = new MyLabel(ui.splomArea);
-                //label2->setText(QString::fromStdString(splom->splatList[i]->dim1Name));
-                //label2->rotateText(-90+360);
-                //label2->setAlignment(Qt::Alignment(Qt::AlignmentFlag::AlignCenter));		
-                //label2->setGeometry(QRect(I*sz, J*sz, 20, sz-25));
             }
 
             sliderController1.SetView(m_Views);

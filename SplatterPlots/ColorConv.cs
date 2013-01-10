@@ -147,8 +147,8 @@ namespace SplatterPlots
             return rgb;
             */
 
-            float Cdec = cf;
-            float Ldec = lf;
+            float Cdec = (float)(Math.Pow(cf, rgbs.Count - 1));
+            float Ldec = (float)(Math.Pow(lf, rgbs.Count - 1));
 
             for (int i = 0; i < rgbs.Count; i++)
             {
@@ -157,8 +157,6 @@ namespace SplatterPlots
                 x += (float)lab.X;
                 y += (float)lab.Y;
                 z += (float)lab.Z;
-                Cdec *= Cdec;
-                Ldec *= Ldec;
             }
             Vector3 newLab = new Vector3(x / rgbs.Count, y / rgbs.Count, z / rgbs.Count);
             Vector3 newLch = LABtoLCH(newLab);
@@ -226,7 +224,7 @@ namespace SplatterPlots
                 var info = ExpPart(i);
                 Logger.Log(info);
             }
-        }
+        }        
         #endregion
 
         #region private

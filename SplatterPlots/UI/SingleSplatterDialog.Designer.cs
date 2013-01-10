@@ -28,50 +28,54 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.sliderController1 = new SplatterPlots.SliderController();
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.splatterView1 = new SplatterPlots.SplatterviewContainer();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.sliderController1 = new SplatterPlots.SliderController();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
-            // sliderController1
+            // dataGridView1
             // 
-            this.sliderController1.AutoSize = true;
-            this.sliderController1.Location = new System.Drawing.Point(718, 12);
-            this.sliderController1.MaximumSize = new System.Drawing.Size(1000, 650);
-            this.sliderController1.MinimumSize = new System.Drawing.Size(250, 450);
-            this.sliderController1.Name = "sliderController1";
-            this.sliderController1.Size = new System.Drawing.Size(500, 516);
-            this.sliderController1.TabIndex = 1;
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Location = new System.Drawing.Point(768, 556);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.Size = new System.Drawing.Size(453, 206);
+            this.dataGridView1.TabIndex = 5;
+            this.dataGridView1.ColumnHeaderMouseDoubleClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dataGridView1_ColumnHeaderMouseDoubleClick);
+            this.dataGridView1.CurrentCellDirtyStateChanged += new System.EventHandler(this.dataGridView1_CurrentCellDirtyStateChanged);
             // 
             // splatterView1
             // 
             this.splatterView1.Location = new System.Drawing.Point(12, 12);
             this.splatterView1.Name = "splatterView1";
-            this.splatterView1.Size = new System.Drawing.Size(700, 700);
+            this.splatterView1.Size = new System.Drawing.Size(750, 750);
             this.splatterView1.TabIndex = 3;
             // 
-            // listView1
+            // sliderController1
             // 
-            this.listView1.CheckBoxes = true;
-            this.listView1.Location = new System.Drawing.Point(718, 534);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(482, 178);
-            this.listView1.TabIndex = 4;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            this.listView1.View = System.Windows.Forms.View.List;
-            this.listView1.ItemChecked += new System.Windows.Forms.ItemCheckedEventHandler(this.listView1_ItemChecked);
+            this.sliderController1.AutoSize = true;
+            this.sliderController1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.sliderController1.Location = new System.Drawing.Point(768, 12);
+            this.sliderController1.MaximumSize = new System.Drawing.Size(1000, 650);
+            this.sliderController1.MinimumSize = new System.Drawing.Size(250, 450);
+            this.sliderController1.Name = "sliderController1";
+            this.sliderController1.Size = new System.Drawing.Size(453, 538);
+            this.sliderController1.TabIndex = 1;
             // 
             // SingleSplatterDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1212, 724);
-            this.Controls.Add(this.listView1);
+            this.ClientSize = new System.Drawing.Size(1228, 767);
+            this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.splatterView1);
             this.Controls.Add(this.sliderController1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "SingleSplatterDialog";
             this.Text = "SingleSplatterDialog";
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -81,6 +85,6 @@
 
         private SliderController sliderController1;
         private SplatterviewContainer splatterView1;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.DataGridView dataGridView1;
     }
 }

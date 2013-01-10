@@ -23,7 +23,7 @@ namespace SplatterPlots
         /// </summary>
         public VerticalLabel()
         {
-            base.CreateControl();
+            //base.CreateControl();
             InitializeComponent();
             SetStyle(System.Windows.Forms.ControlStyles.Opaque, true);
         }       

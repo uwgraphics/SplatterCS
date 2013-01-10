@@ -45,6 +45,9 @@
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             this.buttonSplat = new System.Windows.Forms.Button();
             this.buttonSplam = new System.Windows.Forms.Button();
+            this.buttonLoadFile = new System.Windows.Forms.Button();
+            this.buttonSplatter = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
             this.menuStrip1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -56,7 +59,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(646, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1325, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -77,8 +80,7 @@
             // 
             // listViewDataFiles
             // 
-            this.listViewDataFiles.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listViewDataFiles.Location = new System.Drawing.Point(3, 3);
+            this.listViewDataFiles.Location = new System.Drawing.Point(12, 43);
             this.listViewDataFiles.Name = "listViewDataFiles";
             this.listViewDataFiles.Size = new System.Drawing.Size(193, 286);
             this.listViewDataFiles.TabIndex = 2;
@@ -123,11 +125,10 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.Controls.Add(this.panel1, 1, 0);
-            this.tableLayoutPanel1.Controls.Add(this.listViewDataFiles, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.listViewDataSeries, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.label2, 2, 1);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 27);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(625, 101);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -140,7 +141,6 @@
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panel1.Controls.Add(this.buttonClutter);
             this.panel1.Controls.Add(this.button1);
-            this.panel1.Controls.Add(this.button1vsAll);
             this.panel1.Controls.Add(this.buttonAdd);
             this.panel1.Controls.Add(this.buttonRemove);
             this.panel1.Location = new System.Drawing.Point(202, 73);
@@ -170,11 +170,11 @@
             // 
             // button1vsAll
             // 
-            this.button1vsAll.Location = new System.Drawing.Point(0, 32);
+            this.button1vsAll.Location = new System.Drawing.Point(211, 101);
             this.button1vsAll.Name = "button1vsAll";
-            this.button1vsAll.Size = new System.Drawing.Size(91, 23);
+            this.button1vsAll.Size = new System.Drawing.Size(103, 23);
             this.button1vsAll.TabIndex = 7;
-            this.button1vsAll.Text = "Add to 1vsAll";
+            this.button1vsAll.Text = "Add to 1vsRest";
             this.button1vsAll.UseVisualStyleBackColor = true;
             this.button1vsAll.Click += new System.EventHandler(this.button1vsAll_Click);
             // 
@@ -204,7 +204,7 @@
             // 
             // buttonSplat
             // 
-            this.buttonSplat.Location = new System.Drawing.Point(515, 285);
+            this.buttonSplat.Location = new System.Drawing.Point(1123, 346);
             this.buttonSplat.Name = "buttonSplat";
             this.buttonSplat.Size = new System.Drawing.Size(119, 23);
             this.buttonSplat.TabIndex = 8;
@@ -214,7 +214,7 @@
             // 
             // buttonSplam
             // 
-            this.buttonSplam.Location = new System.Drawing.Point(515, 314);
+            this.buttonSplam.Location = new System.Drawing.Point(1123, 375);
             this.buttonSplam.Name = "buttonSplam";
             this.buttonSplam.Size = new System.Drawing.Size(119, 23);
             this.buttonSplam.TabIndex = 9;
@@ -222,12 +222,44 @@
             this.buttonSplam.UseVisualStyleBackColor = true;
             this.buttonSplam.Click += new System.EventHandler(this.buttonSplam_Click);
             // 
+            // buttonLoadFile
+            // 
+            this.buttonLoadFile.Location = new System.Drawing.Point(12, 335);
+            this.buttonLoadFile.Name = "buttonLoadFile";
+            this.buttonLoadFile.Size = new System.Drawing.Size(75, 23);
+            this.buttonLoadFile.TabIndex = 10;
+            this.buttonLoadFile.Text = "Load File...";
+            this.buttonLoadFile.UseVisualStyleBackColor = true;
+            // 
+            // buttonSplatter
+            // 
+            this.buttonSplatter.Location = new System.Drawing.Point(211, 43);
+            this.buttonSplatter.Name = "buttonSplatter";
+            this.buttonSplatter.Size = new System.Drawing.Size(103, 23);
+            this.buttonSplatter.TabIndex = 11;
+            this.buttonSplatter.Text = "Single Splatterplot";
+            this.buttonSplatter.UseVisualStyleBackColor = true;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(212, 72);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(103, 23);
+            this.button4.TabIndex = 12;
+            this.button4.Text = "SPLAM";
+            this.button4.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(646, 345);
+            this.ClientSize = new System.Drawing.Size(1325, 615);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.buttonSplatter);
+            this.Controls.Add(this.button1vsAll);
+            this.Controls.Add(this.buttonLoadFile);
             this.Controls.Add(this.buttonSplam);
+            this.Controls.Add(this.listViewDataFiles);
             this.Controls.Add(this.buttonSplat);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.menuStrip1);
@@ -264,6 +296,9 @@
         private System.Windows.Forms.Button button1vsAll;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button buttonClutter;
+        private System.Windows.Forms.Button buttonLoadFile;
+        private System.Windows.Forms.Button buttonSplatter;
+        private System.Windows.Forms.Button button4;
 
     }
 }

@@ -12,12 +12,23 @@ namespace SplatterPlots
     {
         private DataSeriesRow m_Row;
         private static Random Rand = new Random();
-        public ProjectedPoint(DataSeriesRow row, float x, float y)
+        private SeriesProjection m_Projection;
+        public ProjectedPoint(SeriesProjection projection, DataSeriesRow row, float x, float y)
         {
             X = x;
             Y = y;
             m_Row = row;
+            m_Projection = projection;
             Z = (float)ProjectedPoint.Rand.NextDouble();
+        }
+        public override string ToString()
+        {
+            string format =
+                m_Projection.HorizontalDimName + ": {0}\n" +
+                m_Projection.VerticalDimName + ": {1}\n" +
+                m_Row.ToString();
+
+            return string.Format(format, X, Y);
         }
 
         public float X { get; private set; }
@@ -52,6 +63,19 @@ namespace SplatterPlots
                 m_Values[col] = Convert.ToSingle(row.Field<string>(col));
             }
             Selected = false;
+        }
+        public override string ToString()
+        {
+            StringBuilder text = new StringBuilder();
+            foreach (var col in m_Row.Table.Columns)
+            {
+                DataColumn datacol = col as DataColumn;
+                text.Append(datacol.ColumnName);
+                text.Append(": ");
+                text.Append(m_Row[datacol]);
+                text.Append("; ");
+            }
+            return text.ToString();
         }
         public DataRow DataRow { get { return m_Row; } }
         public float this[string s]
@@ -117,12 +141,12 @@ namespace SplatterPlots
             return m_Rows.Where(row => row.Selected).Select(row=>row.DataRow);
         }        
 
-        public List<ProjectedPoint> getXYValues(string ColumnXName, string ColumnYName)
+        public List<ProjectedPoint> getXYValues(SeriesProjection projection, string ColumnXName, string ColumnYName)
         {
             var query = from row in m_Rows
                         //orderby row[ColumnXName], row[ColumnYName]      
                         //where !(row[ColumnXName]==0 && row[ColumnYName]==0)
-                        select new ProjectedPoint(row, (row[ColumnXName]), (row[ColumnYName]));
+                        select new ProjectedPoint(projection, row, (row[ColumnXName]), (row[ColumnYName]));
             return new List<ProjectedPoint>(query);
             
         }

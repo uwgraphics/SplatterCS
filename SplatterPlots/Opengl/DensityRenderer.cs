@@ -20,8 +20,6 @@ namespace SplatterPlots
             Width = w;
             Height = h;
 
-            //	initializeGLFunctions(context);
-
             int temp = -99;
             GL.GetInteger(GetPName.DrawBuffer, out temp);
 
@@ -83,27 +81,26 @@ namespace SplatterPlots
             temp = -99;
             GL.GetInteger(GetPName.DrawBuffer, out temp);
 
-            blurProgram = new ShaderProgram("blur.vert","blur.frag",context);
+            blurProgram = new ShaderProgram("Opengl\\blur.vert", "Opengl\\blur.frag", context);
             blurProgram.Link();
 
-            coloring = new ShaderProgram("blur.vert","color.frag",context);            
-            coloring.Link();	
+            coloring = new ShaderProgram("Opengl\\blur.vert", "Opengl\\color.frag", context);            
+            coloring.Link();
 
-            JFA = new ShaderProgram("blur.vert","jfa.frag",context);
+            JFA = new ShaderProgram("Opengl\\blur.vert", "Opengl\\jfa.frag", context);
             JFA.Link();
 
+            System.GC.Collect();
             BlurData = new float[Width * Height];
             ColorData = new float[Width * Height];
             DistData = new float[Width * Height];
         }
-        public void Filter(Action<SeriesProjection,bool> paintPoints,SeriesProjection series)
+        public void Filter(Action<ISeriesProjection,bool> paintPoints,ISeriesProjection series)
         {
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, textureColor, 0);
 
             paintPoints(series, true);
-
-            //GL.FramebufferTexture2D(FramebufferTarget.Framebuffer, FramebufferAttachment.ColorAttachment0, TextureTarget.Texture2D, 0, 0);
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, textureColor);  
@@ -115,14 +112,11 @@ namespace SplatterPlots
                 if (ColorData[i] != 0)
                 {
                     int val = (int)(ColorData[i]*series.dataPoints.Count);
-                    //int y = i / Height;
-                    //int x = i % Height;
-                    //Points.Add(new System.Drawing.Point(x, y));
                     Points.Add(series.dataPoints[val]);
                 }
             }
 
-        }
+        }        
         public void Blur(float sigma)
         {
             int kw = (int)(Math.Ceiling(sigma * 3));
@@ -325,8 +319,7 @@ namespace SplatterPlots
         {
             GL.BindFramebuffer(FramebufferTarget.Framebuffer, 0);
             int temp = -99;
-            GL.GetInteger(GetPName.DrawBuffer, out temp);
-           // GL.BindTexture(TextureTarget.Texture2D, textureHandle0);
+            GL.GetInteger(GetPName.DrawBuffer, out temp);           
         }
         public void CleanUp()
         {

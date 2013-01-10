@@ -37,8 +37,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Name = "SplatterView";
             this.Load += new System.EventHandler(this.SplatterView_Load);
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.SplatterView_Paint);
-            this.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.SplatterView_MouseDoubleClick);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.SplatterView_Paint);            
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SplatterView_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.SplatterView_MouseMove);
             this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.SplatterView_MouseUp);

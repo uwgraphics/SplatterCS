@@ -38,7 +38,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -74,103 +74,103 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddDialog.cs">
+    <Compile Include="UI\AddDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddDialog.Designer.cs">
+    <Compile Include="UI\AddDialog.Designer.cs">
       <DependentUpon>AddDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddDialogRow.cs">
+    <Compile Include="UI\AddDialogRow.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AddDialogRow.Designer.cs">
+    <Compile Include="UI\AddDialogRow.Designer.cs">
       <DependentUpon>AddDialogRow.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddTo1vsAllDialog.cs">
+    <Compile Include="UI\AddTo1vsAllDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="AddTo1vsAllDialog.Designer.cs">
+    <Compile Include="UI\AddTo1vsAllDialog.Designer.cs">
       <DependentUpon>AddTo1vsAllDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ColorConv.cs" />
-    <Compile Include="Data.cs" />
-    <Compile Include="DataFile.cs" />
-    <Compile Include="DataSeries.cs" />
-    <Compile Include="DensityRenderer.cs" />
-    <Compile Include="Form1.cs">
+    <Compile Include="Models\DataFile.cs" />
+    <Compile Include="Models\DataSeries.cs" />
+    <Compile Include="Opengl\DensityRenderer.cs" />
+    <Compile Include="UI\Form1.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
+    <Compile Include="UI\Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\ISeriesProjection.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="OneVersusAllDialog.cs">
+    <Compile Include="UI\OneVersusAllDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="OneVersusAllDialog.Designer.cs">
+    <Compile Include="UI\OneVersusAllDialog.Designer.cs">
       <DependentUpon>OneVersusAllDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="OneVsAllModel.cs" />
+    <Compile Include="Models\OneVsAllModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SelectionTable.cs">
+    <Compile Include="UI\SelectionTable.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SelectionTable.Designer.cs">
+    <Compile Include="UI\SelectionTable.Designer.cs">
       <DependentUpon>SelectionTable.cs</DependentUpon>
     </Compile>
-    <Compile Include="ShaderProgram.cs" />
-    <Compile Include="SingleSplatterDialog.cs">
+    <Compile Include="Opengl\ShaderProgram.cs" />
+    <Compile Include="UI\SingleSplatterDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SingleSplatterDialog.Designer.cs">
+    <Compile Include="UI\SingleSplatterDialog.Designer.cs">
       <DependentUpon>SingleSplatterDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="SliderController.cs">
+    <Compile Include="UI\SliderController.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SliderController.Designer.cs">
+    <Compile Include="UI\SliderController.Designer.cs">
       <DependentUpon>SliderController.cs</DependentUpon>
     </Compile>
-    <Compile Include="SplamDialog.cs">
+    <Compile Include="UI\SplamDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SplamDialog.Designer.cs">
+    <Compile Include="UI\SplamDialog.Designer.cs">
       <DependentUpon>SplamDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="SplamModel.cs" />
-    <Compile Include="SplatterModel.cs" />
-    <Compile Include="SplatterView.cs">
+    <Compile Include="Models\SplamModel.cs" />
+    <Compile Include="Models\SplatterModel.cs" />
+    <Compile Include="Opengl\SplatterView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SplatterView.Designer.cs">
+    <Compile Include="Opengl\SplatterView.Designer.cs">
       <DependentUpon>SplatterView.cs</DependentUpon>
     </Compile>
-    <Compile Include="SplatterviewContainer.cs">
+    <Compile Include="UI\SplatterviewContainer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SplatterviewContainer.Designer.cs">
+    <Compile Include="UI\SplatterviewContainer.Designer.cs">
       <DependentUpon>SplatterviewContainer.cs</DependentUpon>
     </Compile>
-    <Compile Include="VerticalLabel.cs">
+    <Compile Include="UI\VerticalLabel.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="VerticalLabel.Designer.cs">
+    <Compile Include="UI\VerticalLabel.Designer.cs">
       <DependentUpon>VerticalLabel.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="AddDialog.resx">
+    <EmbeddedResource Include="UI\AddDialog.resx">
       <DependentUpon>AddDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AddDialogRow.resx">
+    <EmbeddedResource Include="UI\AddDialogRow.resx">
       <DependentUpon>AddDialogRow.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AddTo1vsAllDialog.resx">
+    <EmbeddedResource Include="UI\AddTo1vsAllDialog.resx">
       <DependentUpon>AddTo1vsAllDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form1.resx">
+    <EmbeddedResource Include="UI\Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="OneVersusAllDialog.resx">
+    <EmbeddedResource Include="UI\OneVersusAllDialog.resx">
       <DependentUpon>OneVersusAllDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
@@ -182,43 +182,43 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="SelectionTable.resx">
+    <EmbeddedResource Include="UI\SelectionTable.resx">
       <DependentUpon>SelectionTable.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SingleSplatterDialog.resx">
+    <EmbeddedResource Include="UI\SingleSplatterDialog.resx">
       <DependentUpon>SingleSplatterDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SliderController.resx">
+    <EmbeddedResource Include="UI\SliderController.resx">
       <DependentUpon>SliderController.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SplamDialog.resx">
+    <EmbeddedResource Include="UI\SplamDialog.resx">
       <DependentUpon>SplamDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SplatterView.resx">
+    <EmbeddedResource Include="Opengl\SplatterView.resx">
       <DependentUpon>SplatterView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SplatterviewContainer.resx">
+    <EmbeddedResource Include="UI\SplatterviewContainer.resx">
       <DependentUpon>SplatterviewContainer.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="blend.frag">
+    <None Include="Opengl\blend.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="blur.frag">
+    <None Include="Opengl\blur.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="blur.vert">
+    <None Include="Opengl\blur.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="color.frag">
+    <None Include="Opengl\color.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="glyph.frag">
+    <None Include="Opengl\glyph.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="glyph.vert">
+    <None Include="Opengl\glyph.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="jfa.frag">
+    <None Include="Opengl\jfa.frag">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">
@@ -253,6 +253,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
