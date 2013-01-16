@@ -29,6 +29,10 @@ namespace SplatterPlots
                 flowLayoutPanel1.Controls.Add(row);
                 comboBox1.Items.Add(name);
             }
+            if (m_Rows.Count>15)
+            {
+                m_Rows.ForEach(r => r.SetToIgnore());
+            }
         }
         public DataFileSchema GetSchema()
         {
@@ -38,6 +42,11 @@ namespace SplatterPlots
             }
             m_Schema.GroupBy = comboBox1.SelectedItem as string;
             return m_Schema;
+        }
+
+        private void buttonIgnoreAll_Click(object sender, EventArgs e)
+        {
+            m_Rows.ForEach(r => r.SetToIgnore());
         }
     }
 }

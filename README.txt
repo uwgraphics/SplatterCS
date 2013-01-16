@@ -15,4 +15,13 @@ The meat of splatterplots is in two different files, SplatterView and DensityRen
 
 SplatterView extends OpenTK.GLControl, which gives us an encapsulation of an OpenGL context, yet still works as a WindowsForms control. Each instance of GLControl will create its own context. SplatterView takes in a SplatterModel object and is responsible for rendering the splatterplot. DensityRenderer encapsulates all of the bufferobjects and textures required to make spaltterplots work. The whole system is event based, so it only redraw when needed.
 
+The typical workflow is as follows:
+
+First load a file into the system by using the load file button. This will add it to the list on the first dialog.
+
+Select the file on the list and click on one of the three options: 
+Single splatterplot
+splatterplot Matrix
+One versus Rest Splatterplot Matrix
+
 If you get really stuck, you can contact me at adr.mayorga@gmail.com

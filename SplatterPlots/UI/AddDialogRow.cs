@@ -28,6 +28,7 @@ namespace SplatterPlots
                 comboBox1.SelectedIndex = 1;
             }
         }
+        public void SetToIgnore() { comboBox1.SelectedIndex = 1; }
         public string ColumName { get; private set; }
         public bool IsNumeric { get { return comboBox1.SelectedIndex == 0; } }
     }
