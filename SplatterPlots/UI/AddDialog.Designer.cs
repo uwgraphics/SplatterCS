@@ -113,7 +113,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.flowLayoutPanel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximumSize = new System.Drawing.Size(461, 300);
+            this.MaximumSize = new System.Drawing.Size(461, 1000);
             this.Name = "AddDialog";
             this.Text = "AddDialog";
             this.ResumeLayout(false);
