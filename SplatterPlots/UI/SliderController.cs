@@ -214,8 +214,6 @@ namespace SplatterPlots
             SetAsScatter();
         }
 
-        
-
         private void buttonScreenShot_Click(object sender, EventArgs e)
         {
             var dialog = new SaveFileDialog();

@@ -12,8 +12,21 @@ namespace SplatterPlots
     public partial class SingleSplatterDialog : Form
     {
         public event EventHandler PointSelection;
-        SplatterModel m_Model;
-        Dictionary<ListViewItem, SeriesProjection> m_Series = new Dictionary<ListViewItem, SeriesProjection>();
+        SplatterModel m_Model;        
+
+        private SelectionTable m_SelectionTable;
+        private SelectionTable SelectionTableDialog
+        {
+            get
+            {
+                if (m_SelectionTable == null || m_SelectionTable.IsDisposed)
+                {
+                    m_SelectionTable = new SelectionTable();
+                    m_SelectionTable.Text = this.Text;
+                }
+                return m_SelectionTable;
+            }
+        }
 
         public SingleSplatterDialog()
         {
@@ -27,7 +40,32 @@ namespace SplatterPlots
             {
                 PointSelection(this, EventArgs.Empty);
             }
-            
+            else
+            {
+                Refresh();
+                DataTable view = null;
+                foreach (var series in m_Model.Series.Values)
+                {
+                    if (view == null)
+                    {
+                        var list = series.Data.GetSelectedRows();
+                        if (list.Count() > 0)
+                        {
+                            view = list.CopyToDataTable();
+                        }
+                    }
+                    else
+                    {
+                        series.Data.GetSelectedRows().CopyToDataTable(view, LoadOption.PreserveChanges);
+                    }
+                }
+                SelectionTableDialog.SetDataView(view);
+                if (!SelectionTableDialog.Visible)
+                {
+                    SelectionTableDialog.Show();
+                }
+                SelectionTableDialog.BringToFront();
+            }            
         }
         public void SetModel(SplatterModel model)
         {
@@ -37,19 +75,6 @@ namespace SplatterPlots
             list.Add(splatterView1.View);
             sliderController1.SetView(list);
             GridViewSetup();
-
-            //foreach (var series in m_Model.Series.Values)
-            //{
-            //    ListViewItem item = new ListViewItem(series.Name);
-            //    item.Name = series.Name;
-            //    item.BackColor = series.Color;
-            //    item.Checked = true;
-            //    if (!listView1.Items.ContainsKey(item.Name))
-            //    {
-            //        m_Series[item] = series;
-            //        listView1.Items.Add(item);
-            //    }
-            //}
         }
 
         private void GridViewSetup()
@@ -159,16 +184,6 @@ namespace SplatterPlots
         public SplatterView View { get { return splatterView1.View; } }
         public SliderController Slider { get { return sliderController1; } }
 
-        private void listView1_ItemChecked(object sender, ItemCheckedEventArgs e)
-        {
-
-            //DisableMouseClicks();
-            var series = m_Series[e.Item];
-            series.Enabled = e.Item.Checked;
-            View.Refresh();
-            //EnableMouseClicks();
-        }
-
         private void DisableMouseClicks()
         {
             if (this.Filter == null)
@@ -234,6 +249,14 @@ namespace SplatterPlots
                 m_Model.Groups[dataGridView1.Columns[e.ColumnIndex].DataPropertyName].Color = colorDialog.Color;
                 Refresh();
             }
-        } 
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (m_SelectionTable != null)
+            {
+                m_SelectionTable.Close();
+            }
+            base.OnClosing(e);
+        }
     }
 }

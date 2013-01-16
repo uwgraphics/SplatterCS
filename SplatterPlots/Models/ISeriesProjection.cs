@@ -47,6 +47,8 @@ namespace SplatterPlots
         public float Xmin { get { return m_Data.ColumnData[m_Dim0].Min; } }
         public float Ymin { get { return m_Data.ColumnData[m_Dim1].Min; } }
 
+        public DataSeries Data { get { return m_Data; } }
+
         public string HorizontalDimName { get { return m_Dim0; } }
         public string VerticalDimName { get { return m_Dim1; } }
 

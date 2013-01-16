@@ -15,8 +15,34 @@ namespace SplatterPlots
         List<SplatterView> m_Views = new List<SplatterView>();
         private Dictionary<ListViewItem, DataSeries> m_Series = new Dictionary<ListViewItem, DataSeries>();
 
-        public event EventHandler SplatterSelection;
-        public event EventHandler PointSelection;
+        private SingleSplatterDialog m_SplatterDialog;
+        private SingleSplatterDialog SplatterDialog
+        {
+            get
+            {
+                if (m_SplatterDialog == null||m_SplatterDialog.IsDisposed)
+                {
+                    m_SplatterDialog = new SingleSplatterDialog();
+                    m_SplatterDialog.PointSelection += new EventHandler(view_PointSelection);
+                    m_SplatterDialog.Text = this.Text;
+                } 
+                return m_SplatterDialog;
+            }
+        }
+
+        private SelectionTable m_SelectionTable;
+        private SelectionTable SelectionTableDialog
+        {
+            get
+            {
+                if (m_SelectionTable == null || m_SelectionTable.IsDisposed)
+                {
+                    m_SelectionTable= new SelectionTable();
+                    m_SelectionTable.Text = this.Text;
+                }
+                return m_SelectionTable;
+            }
+        }
 
         public SplamDialog()
         {
@@ -62,19 +88,56 @@ namespace SplatterPlots
 
         void view_PointSelection(object sender, EventArgs e)
         {
-            if (PointSelection != null)
+            if (m_SplatterDialog != null && !m_SplatterDialog.IsDisposed)
             {
-                PointSelection(this, EventArgs.Empty);
+                m_SplatterDialog.Refresh();
             }
+            Refresh();
+            DataTable view = null;
+            foreach (var series in m_Series.Values)
+            {
+                if (view == null)
+                {
+                    var list = series.GetSelectedRows();
+                    if (list.Count() > 0)
+                    {
+                        view = list.CopyToDataTable();
+                    }
+                }
+                else
+                {
+                    series.GetSelectedRows().CopyToDataTable(view, LoadOption.PreserveChanges);
+                }
+            }
+            SelectionTableDialog.SetDataView(view);
+            if (!SelectionTableDialog.Visible)
+            {
+                SelectionTableDialog.Show();
+            }
+            SelectionTableDialog.BringToFront();
         }
 
         void view_DoubleClick(object sender, EventArgs e)
         {
             var view = sender as SplatterView;
-            if (view != null && SplatterSelection!=null)
+            if (view != null)
             {
-                SplatterSelection(view, EventArgs.Empty);
+                SplatterDialog.SetModel(view.Model);
+                SplatterDialog.Show();
+                SplatterDialog.BringToFront();
             }
+        }
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            if (m_SelectionTable!=null)
+            {
+                m_SelectionTable.Close();
+            }
+            if (m_SplatterDialog != null)
+            {
+                m_SplatterDialog.Close();
+            }
+            base.OnClosing(e);
         }
     }
 }

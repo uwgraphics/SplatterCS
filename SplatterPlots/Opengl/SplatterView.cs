@@ -148,7 +148,7 @@ namespace SplatterPlots
             m_DensityThreshold = 1;
             m_StripePeriod = 50;
             m_StripeWidth = 1;
-            m_MaxMode = MaxMode.Global;
+            m_MaxMode = MaxMode.PerGroup;
             m_MousePosition = new Point(-100, -100);
 
             InitializeComponent();
@@ -197,6 +197,10 @@ namespace SplatterPlots
         {
             m_ScreenOffsetX = Width / 2;
             m_ScreenOffsetY = Height / 2;
+            if (m_Model != null)
+            {
+                m_Model.ModelChanged -= splatPM_ModelChanged;
+            }
             m_Model = spm;
             m_Model.ModelChanged += new EventHandler(splatPM_ModelChanged);
             m_DensityMap.Clear();

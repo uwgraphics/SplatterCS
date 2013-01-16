@@ -60,6 +60,7 @@
             this.trackBarXScaling = new System.Windows.Forms.TrackBar();
             this.label10 = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.buttonAdvanced = new System.Windows.Forms.Button();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.buttonSplatter = new System.Windows.Forms.Button();
@@ -69,7 +70,6 @@
             this.radioButtonGlobal = new System.Windows.Forms.RadioButton();
             this.radioButtonRelative = new System.Windows.Forms.RadioButton();
             this.checkBoxGrid = new System.Windows.Forms.CheckBox();
-            this.buttonAdvanced = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarBandwith)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarContourThresh)).BeginInit();
@@ -437,6 +437,16 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(450, 535);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
+            // buttonAdvanced
+            // 
+            this.buttonAdvanced.Location = new System.Drawing.Point(3, 138);
+            this.buttonAdvanced.Name = "buttonAdvanced";
+            this.buttonAdvanced.Size = new System.Drawing.Size(92, 23);
+            this.buttonAdvanced.TabIndex = 7;
+            this.buttonAdvanced.Text = "Advanced>>";
+            this.buttonAdvanced.UseVisualStyleBackColor = true;
+            this.buttonAdvanced.Click += new System.EventHandler(this.button1_Click);
+            // 
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -538,12 +548,10 @@
             // radioButtonGlobal
             // 
             this.radioButtonGlobal.AutoSize = true;
-            this.radioButtonGlobal.Checked = true;
             this.radioButtonGlobal.Location = new System.Drawing.Point(3, 32);
             this.radioButtonGlobal.Name = "radioButtonGlobal";
             this.radioButtonGlobal.Size = new System.Drawing.Size(100, 17);
             this.radioButtonGlobal.TabIndex = 2;
-            this.radioButtonGlobal.TabStop = true;
             this.radioButtonGlobal.Text = "Use Global Max";
             this.radioButtonGlobal.UseVisualStyleBackColor = true;
             this.radioButtonGlobal.CheckedChanged += new System.EventHandler(this.radioButtonGlobal_CheckedChanged);
@@ -551,10 +559,12 @@
             // radioButtonRelative
             // 
             this.radioButtonRelative.AutoSize = true;
+            this.radioButtonRelative.Checked = true;
             this.radioButtonRelative.Location = new System.Drawing.Point(109, 32);
             this.radioButtonRelative.Name = "radioButtonRelative";
             this.radioButtonRelative.Size = new System.Drawing.Size(118, 17);
             this.radioButtonRelative.TabIndex = 3;
+            this.radioButtonRelative.TabStop = true;
             this.radioButtonRelative.Text = "Use Per Group Max";
             this.radioButtonRelative.UseVisualStyleBackColor = true;
             // 
@@ -570,16 +580,6 @@
             this.checkBoxGrid.Text = "Show Grid";
             this.checkBoxGrid.UseVisualStyleBackColor = true;
             this.checkBoxGrid.CheckedChanged += new System.EventHandler(this.checkBoxGrid_CheckedChanged);
-            // 
-            // buttonAdvanced
-            // 
-            this.buttonAdvanced.Location = new System.Drawing.Point(3, 138);
-            this.buttonAdvanced.Name = "buttonAdvanced";
-            this.buttonAdvanced.Size = new System.Drawing.Size(92, 23);
-            this.buttonAdvanced.TabIndex = 7;
-            this.buttonAdvanced.Text = "Advanced>>";
-            this.buttonAdvanced.UseVisualStyleBackColor = true;
-            this.buttonAdvanced.Click += new System.EventHandler(this.button1_Click);
             // 
             // SliderController
             // 

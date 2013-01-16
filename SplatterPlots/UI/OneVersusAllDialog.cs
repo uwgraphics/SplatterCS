@@ -74,6 +74,7 @@ namespace SplatterPlots
                 {
                     m_SingleSplatterDialog = new SingleSplatterDialog();
                     m_SingleSplatterDialog.PointSelection += new EventHandler(view_PointSelection);
+                    m_SingleSplatterDialog.Text = this.Text;
                 }
                 return m_SingleSplatterDialog;
             }
@@ -85,6 +86,7 @@ namespace SplatterPlots
                 if (m_SelectionDialog == null || m_SelectionDialog.IsDisposed)
                 {
                     m_SelectionDialog = new SelectionTable();
+                    m_SelectionDialog.Text = this.Text;
                 }
                 return m_SelectionDialog;
             }

@@ -97,42 +97,42 @@ namespace SplatterPlots
         public bool Member1
         {
             get { return m_Member1; }
-            set { m_Member1 = value; if (value) SetMember(0); NotifyPropertyChanged("Member1"); }
+            set { m_Member1 = value; if (value) SetMember(0); else SetMember(-1); NotifyPropertyChanged("Member1"); }
         }
         public bool Member2
         {
             get { return m_Member2; }
-            set { m_Member2 = value; if (value) SetMember(1); NotifyPropertyChanged("Member2"); }
+            set { m_Member2 = value; if (value) SetMember(1); else SetMember(-1); NotifyPropertyChanged("Member2"); }
         }
         public bool Member3
         {
             get { return m_Member3; }
-            set { m_Member3 = value; if (value) SetMember(2); NotifyPropertyChanged("Member3"); }
+            set { m_Member3 = value; if (value) SetMember(2); else SetMember(-1); NotifyPropertyChanged("Member3"); }
         }
         public bool Member4
         {
             get { return m_Member4; }
-            set { m_Member4 = value; if (value) SetMember(3); NotifyPropertyChanged("Member4"); }
+            set { m_Member4 = value; if (value) SetMember(3); else SetMember(-1); NotifyPropertyChanged("Member4"); }
         }
         public bool Member5
         {
             get { return m_Member5; }
-            set { m_Member5 = value; if (value) SetMember(4); NotifyPropertyChanged("Member5"); }
+            set { m_Member5 = value; if (value) SetMember(4); else SetMember(-1); NotifyPropertyChanged("Member5"); }
         }
         public bool Member6
         {
             get { return m_Member6; }
-            set { m_Member6 = value; if (value) SetMember(5); NotifyPropertyChanged("Member6"); }
+            set { m_Member6 = value; if (value) SetMember(5); else SetMember(-1); NotifyPropertyChanged("Member6"); }
         }
         public bool Member7
         {
             get { return m_Member7; }
-            set { m_Member7 = value; if (value) SetMember(6); NotifyPropertyChanged("Member7"); }
+            set { m_Member7 = value; if (value) SetMember(6); else SetMember(-1); NotifyPropertyChanged("Member7"); }
         }
         public bool Member8
         {
             get { return m_Member8; }
-            set { m_Member8 = value; if (value) SetMember(7); NotifyPropertyChanged("Member8"); }
+            set { m_Member8 = value; if (value) SetMember(7); else SetMember(-1); NotifyPropertyChanged("Member8"); }
         }
 
         public int Member { get; private set; }
@@ -152,10 +152,10 @@ namespace SplatterPlots
     {
         private List<Color> GroupColors = new List<Color>();
 
-        public SplatterModel(List<DataSeries> datas, int d0, int d1): this(datas, datas.First().ColumnNames[d0],datas.First().ColumnNames[d1])
+        public SplatterModel(List<DataSeries> datas, int d0, int d1,bool calcColors): this(datas, datas.First().ColumnNames[d0],datas.First().ColumnNames[d1],calcColors)
         {
         }
-        public SplatterModel(List<DataSeries> datas, string dim0N, string dim1N)
+        public SplatterModel(List<DataSeries> datas, string dim0N, string dim1N, bool calcColors)
         {
             Groups = new Dictionary<string, ISeriesProjection>();
             Series = new Dictionary<string,SeriesProjection>();
@@ -186,8 +186,15 @@ namespace SplatterPlots
                 j++;
             }
             NumberOfGroups = Math.Min(Series.Count, 8);
+            if (NumberOfGroups == Series.Count && !calcColors)
+            {
+                GroupColors = Series.Values.Select(s => s.Color).ToList();
+            }
+            else
+            {
+                GroupColors = ColorConv.pickIsoCols(74.0f, NumberOfGroups, .5f, (float)Math.PI);
+            }
 
-            GroupColors = ColorConv.pickIsoCols(74.0f, NumberOfGroups, .5f, (float)Math.PI);
             SetGroupMembers();
             SeriesMemberships.ListChanged += new ListChangedEventHandler(SeriesMemberships_ListChanged);
 

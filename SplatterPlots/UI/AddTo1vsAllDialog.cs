@@ -15,8 +15,12 @@ namespace SplatterPlots
         {
             InitializeComponent();
         }
-        public void SetDataFile(DataFile dataFile)
-        {            
+        public void SetDataFile(DataFile dataFile, bool useForSplatter)
+        {
+            if (useForSplatter)
+            {
+                comboBoxGroup.Items.Add("None");
+            }
             foreach (var dim in dataFile.ColumnNames)
             {
                 if (dataFile.IsNumeric(dim))
@@ -50,22 +54,19 @@ namespace SplatterPlots
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            // test for validity
-            bool valid = true;
+            // test for validity            
             if (string.IsNullOrEmpty(GroupBy)||
                 string.IsNullOrEmpty(HorizontalDim)||
                 string.IsNullOrEmpty(VerticalDim))
             {
-                valid = false;
+                MessageBox.Show("Please choose a value for each field", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DialogResult = System.Windows.Forms.DialogResult.None;
+
             }else if (GroupBy.Equals(HorizontalDim)||
                         GroupBy.Equals(VerticalDim)||
                         HorizontalDim.Equals(VerticalDim))
             {
-                valid = false;
-            }
-            if (!valid)
-            {
-                MessageBox.Show("Please use different values for each choice", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please use different values for each field", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 DialogResult = System.Windows.Forms.DialogResult.None;
             }            
         }

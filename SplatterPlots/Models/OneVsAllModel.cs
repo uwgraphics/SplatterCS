@@ -30,7 +30,7 @@ namespace SplatterPlots
                 Others.Add(datas[1]);
                 datas[0].Color = colors[i];
                 datas[1].Color = OtherColor;
-                var sm = new SplatterModel(datas, dim0, dim1);
+                var sm = new SplatterModel(datas, dim0, dim1, false);
                 SplatList.Add(sm);
                 i++;
             }

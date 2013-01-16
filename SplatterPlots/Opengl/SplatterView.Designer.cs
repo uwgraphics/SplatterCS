@@ -14,6 +14,10 @@
         protected override void Dispose(bool disposing)
         {
             ClearVBOs();
+            if (m_Model != null)
+            {
+                m_Model.ModelChanged -= splatPM_ModelChanged;
+            }
             if (disposing && (components != null))
             {
                 components.Dispose();

@@ -70,45 +70,17 @@ namespace SplatterPlots
             }
         }
         #endregion
+
         #region Properties
         public DataTable Table { get { return m_table; } }
         public string Name { get; set; }
         public List<string> ColumnNames { get { return m_ColumnNames; } }
         #endregion
+
         #region Public
-        public List<List<DataSeries>> ConvertToOneVsAllDataSeries(string groupBy, string dim0, string dim1)
-        {           
-            //var res = new List<List<DataSeries>>();
-            //var schema = new DataFileSchema(this);
-            //schema.ColumnNames.ForEach(col => schema.ColumnNumericMap[col] = false);
-            //schema.ColumnNumericMap[dim0] = true;
-            //schema.ColumnNumericMap[dim1] = true;
-            //var groups = (from row in m_table.AsEnumerable()
-            //              select row.Field<string>(groupBy)).Distinct();
-            //var colors = ColorConv.pickIsoCols(74.0f, 2, .5f, (float)Math.PI);
-            //foreach (var groupVal in groups)
-            //{                
-            //    var theGroupQuery = from row in m_table.AsEnumerable()
-            //                        where row.Field<string>(groupBy) == groupVal
-            //                        select row;
-            //    var othersQuery = from row in m_table.AsEnumerable()
-            //                      where row.Field<string>(groupBy) !=groupVal
-            //                      select row;
-            //    DataSeries theGroup = new DataSeries(this, schema, Name + "." + groupVal);
-            //    theGroup.AddRowRange(theGroupQuery, schema);
-            //    theGroup.EndInit();
-            //    theGroup.Color = colors[0];
-            //    DataSeries Others = new DataSeries(this, schema, Name + ".Others");
-            //    Others.AddRowRange(othersQuery, schema);
-            //    Others.EndInit();
-            //    Others.Color = colors[1];
-            //    var temp = new List<DataSeries>();
-            //    temp.Add(theGroup);
-            //    temp.Add(Others);
-            //    res.Add(temp);                
-            //}
-                         
-            //return res;
+        //groups the top limitOfGroups groups, and compares them with the rest of the dataset. 
+        public List<List<DataSeries>> ConvertToOneVsAllDataSeries(string groupBy, string dim0, string dim1, int limitOfGroups)
+        {             
             //need to make sure these guys are linked
 
             var res = new List<List<DataSeries>>();
@@ -117,7 +89,7 @@ namespace SplatterPlots
             schema.ColumnNumericMap[dim0] = true;
             schema.ColumnNumericMap[dim1] = true;
             schema.GroupBy = groupBy;
-            var groups = ConvertToDataSeries(schema);
+            var groups = ConvertToDataSeries(schema, limitOfGroups);
             var ordered = groups.OrderByDescending(g => g.Rows.Count).ToList();
             for (int i = 0; i < Math.Min(10,groups.Count); i++)
             {
@@ -134,26 +106,10 @@ namespace SplatterPlots
                 Others.EndInit();
                 temp.Add(Others);
                 res.Add(temp);
-            }
-            //for (int i = 10; i < groups.Count; i++)
-            //{
-            //    var temp = new List<DataSeries>();
-            //    temp.Add(groups[i]);
-            //    DataSeries Others = new DataSeries(this, schema, Name + ".Others");
-            //    for (int j = 0; j < groups.Count; j++)
-            //    {
-            //        if (i != j)
-            //        {
-            //            groups[j].Rows.ForEach(r => Others.AddRow(r));
-            //        }
-            //    }
-            //    Others.EndInit();
-            //    temp.Add(Others);
-            //    res.Add(temp);
-            //}
+            }           
             return res;
         }        
-        public List<DataSeries> ConvertToDataSeries(DataFileSchema schema)
+        public List<DataSeries> ConvertToDataSeries(DataFileSchema schema, int limitOfGroups)
         {
             List<DataSeries> res = new List<DataSeries>();
             if (schema.GroupBy.Equals("None"))
@@ -173,7 +129,7 @@ namespace SplatterPlots
                     group row by row[schema.GroupBy] into set
                     orderby set.Count() descending
                     select set;
-                int max = 10;
+                int max = limitOfGroups > 0 ? limitOfGroups : int.MaxValue;
                 int index = 0;
                 DataSeries rest = new DataSeries(this, schema, ".Rest");
                 foreach (var group in query)
@@ -216,6 +172,5 @@ namespace SplatterPlots
             return false;
         }
         #endregion
-
     }
 }

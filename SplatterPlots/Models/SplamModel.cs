@@ -17,11 +17,15 @@ namespace SplatterPlots
         public SplamModel(List<DataSeries> datas)
         {
             Series = new List<DataSeries>(datas);
+            var colors = ColorConv.pickIsoCols(74.0f, Series.Count, .5f, (float)Math.PI);
+            for (int i = 0; i < Series.Count; i++)
+            {
+                Series[i].Color = colors[i];
+            }
             SplatList = new List<SplatterModel>();
             Iindex = new List<int>();
             Jindex = new List<int>();
-            numDim = datas.First().ColumnNames.Count;
-            //numDim = Math.Min(numDim, 10);
+            numDim = datas.First().ColumnNames.Count;            
             dimNames = datas.First().ColumnNames;
 
 
@@ -29,7 +33,7 @@ namespace SplatterPlots
             {
                 for (int j = i + 1; j < numDim; j++)
                 {
-                    var spm = new SplatterModel(datas, i, j);
+                    var spm = new SplatterModel(Series, i, j, false);
                     SplatList.Add(spm);
 
                     Iindex.Add(i);
