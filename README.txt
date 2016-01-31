@@ -1,3 +1,5 @@
+NOTE: If you are interested in a JavaScript implementation of the Splatterplot technique, including an in-the-browser demo, please see our updated repo: https://github.com/uwgraphics/splatterjs
+
 Notes by Adrian Mayorga
 1/16/2013
 
